@@ -6,7 +6,7 @@ deliberately untested here; what must never drift is where a week starts.
 
 from datetime import datetime, timedelta, timezone
 
-from quota import WEEKLY_LIMIT, next_week_start, week_start
+from quota import WEEKLY_LIMIT, allowance_left, next_week_start, week_start
 
 UTC = timezone.utc
 
@@ -33,6 +33,18 @@ def test_sunday_night_still_belongs_to_the_old_week():
 def test_reset_is_the_following_monday():
     wednesday = datetime(2026, 7, 8, 15, 30, tzinfo=UTC)
     assert next_week_start(wednesday) == datetime(2026, 7, 13, tzinfo=UTC)
+
+
+def test_completions_raise_the_cap_one_for_one():
+    assert allowance_left(used=0, completions=0) == 3
+    assert allowance_left(used=3, completions=0) == 0
+    assert allowance_left(used=3, completions=1) == 1
+    assert allowance_left(used=4, completions=1) == 0
+
+
+def test_allowance_never_goes_negative():
+    assert allowance_left(used=5, completions=0) == 0
+    assert allowance_left(used=9, completions=2) == 0
 
 
 def test_every_weekday_maps_into_one_seven_day_window():

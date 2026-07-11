@@ -68,13 +68,14 @@ in `app/history.py`: difficulty is not in the id (it's always "medium", D7);
 if difficulty ever becomes real, the table needs a difficulty column.
 
 Generation is capped at 3 per user per calendar week (decisions.md **D10**),
-counted in a Supabase `generation_events` table — the first and only app
-table. The check **fails closed**: if the table is missing or unreachable,
-the Generate page blocks with an error rather than generating uncapped. So
-the migration (`supabase/migrations/0001_weekly_generation_quota.sql`) must
-be run by hand in the Supabase SQL editor **before** deploying code that
-includes quota.py — the assistant's MCP access is read-only and cannot apply
-it.
+plus one extra request per project *completed* — submitted and scored — that
+week (**D11**, one credit per project ever, enforced by a DB unique
+constraint). The counters live in Supabase `generation_events` and
+`completion_events` tables. The check **fails closed**: if either table is
+missing or unreachable, the Generate page blocks with an error rather than
+generating uncapped. So both migrations in `supabase/migrations/` must be
+run by hand in the Supabase SQL editor **before** deploying code that reads
+them — the assistant's MCP access is read-only and cannot apply them.
 
 ## The thing that actually needs doing next
 

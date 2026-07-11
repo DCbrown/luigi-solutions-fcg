@@ -4,13 +4,22 @@ import streamlit as st
 
 from fcg.generator import generate_project
 from fcg.storage import save_project
-from quota import WEEKLY_LIMIT, next_week_start, record_generation, used_this_week
+from quota import (
+    WEEKLY_LIMIT,
+    allowance_left,
+    completions_this_week,
+    next_week_start,
+    record_generation,
+    used_this_week,
+)
 
 st.title("Generate a project")
 
-# Weekly cap (docs/decisions.md D10). Fail closed: no count, no generating.
+# Weekly cap plus completion credits (docs/decisions.md D10, D11).
+# Fail closed: no count, no generating.
 try:
     used = used_this_week()
+    completions = completions_this_week()
 except Exception as e:
     st.error(
         "Couldn't check your weekly project allowance "
@@ -19,15 +28,18 @@ except Exception as e:
     )
     st.stop()
 
-left = max(WEEKLY_LIMIT - used, 0)
+cap = WEEKLY_LIMIT + completions
+left = allowance_left(used, completions)
 if left == 0:
     st.warning(
-        f"You've used all {WEEKLY_LIMIT} project requests for this week. "
-        f"New requests open **{next_week_start():%A %d %B}** at 00:00 UTC."
+        f"You've used all {cap} project requests for this week. "
+        f"New requests open **{next_week_start():%A %d %B}** at 00:00 UTC — "
+        "or complete a project you've already generated (submit it for "
+        "scoring) to earn another one right away."
     )
     st.stop()
 
-st.caption(f"{left} of {WEEKLY_LIMIT} project requests left this week.")
+st.caption(f"{left} of {cap} project requests left this week.")
 
 st.write(
     "Same seed, same client — so you can hand someone a number and you'll both "

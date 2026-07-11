@@ -5,6 +5,10 @@ __pycache__/
 .DS_Store
 .env
 
+# Supabase project URL + publishable key (docs/decisions.md D9).
+# secrets.toml.example is the committed template.
+.streamlit/secrets.toml
+
 # Build artefacts from `pip install -e .`
 *.egg-info/
 

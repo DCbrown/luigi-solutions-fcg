@@ -3,39 +3,42 @@
 Run with:  streamlit run app/main.py
 
 UI only. Anything that thinks lives in src/fcg/ (docs/quality.md, Conventions).
+Routing is gated on auth (docs/decisions.md D9): signed out, the only page is
+login; signed in, the full app.
 """
+
+import os
+
+# pyarrow's bundled mimalloc segfaulted the app mid-session (Arrow conversion
+# on a script thread, 2026-07-11 — see docs/HANDOFF.md); the system allocator
+# doesn't. Read once at pyarrow import, so it must be set before anything
+# imports pyarrow.
+os.environ.setdefault("ARROW_DEFAULT_MEMORY_POOL", "system")
 
 import streamlit as st
 
-from fcg.storage import list_projects
+from auth import current_user, logout
 
 st.set_page_config(page_title="Fictional Client Generator", page_icon="📁")
 
-st.title("📁 Fictional Client Generator")
-st.write(
-    "A fake client with a real brief. Build what they asked for, push it to "
-    "GitHub, and find out how much of it you actually delivered."
-)
+user = current_user()
 
-st.subheader("How it works")
-st.markdown(
-    """
-1. **Generate** — you get a client, a brief, and a spreadsheet of their content.
-2. **Build** — leave the app. Any stack you like. Aim for about two hours.
-3. **Submit** — push to a public GitHub repo and paste the link.
-4. **Score** — graded against the rubric written *with* your brief, before you
-   wrote a line. It can't move the goalposts.
-"""
-)
-
-current = st.session_state.get("project")
-if current:
-    st.success(f"Current project: **{current.client.name}** — `{current.id}`")
-    st.page_link("pages/2_Brief.py", label="Read the brief →")
+if user is None:
+    page = st.navigation(
+        [st.Page("app_pages/login.py", title="Log in", icon=":material/login:")],
+        position="hidden",
+    )
 else:
-    st.info("No project yet.")
-    st.page_link("pages/1_Generate.py", label="Generate one →")
+    with st.sidebar:
+        st.caption(f"Signed in as **{user.email}**")
+        st.button("Log out", icon=":material/logout:", on_click=logout)
+    page = st.navigation(
+        [
+            st.Page("app_pages/home.py", title="Home", icon=":material/home:", default=True),
+            st.Page("app_pages/generate.py", title="Generate", icon=":material/casino:"),
+            st.Page("app_pages/brief.py", title="Brief", icon=":material/description:"),
+            st.Page("app_pages/submit.py", title="Submit and score", icon=":material/grading:"),
+        ]
+    )
 
-saved = list_projects()
-if saved:
-    st.caption(f"{len(saved)} project(s) saved in `data/generated/`.")
+page.run()

@@ -62,10 +62,36 @@ It's grep with domain knowledge, not a DOM query.
 - *Running the build* — the fix that actually works, and the one thing we've ruled
   out on safety ([quality.md](quality.md) Q5).
 
+**Measured (2026-07-11).** The one risk the handoff called unmeasured now isn't.
+Built the seed-4471 brief three ways and graded each through the real scorer:
+
+| Build | Score | Notes |
+| --- | --- | --- |
+| Vanilla HTML/CSS | **100** | every check fired for the right reason |
+| Idiomatic React (`ProductCard`, `products.map`, `<nav>`) | **100** | D2 does *not* bite conventional framework code |
+| Competent-but-divergent React | **84** | product listing & nav each `0/8`, though both fully built |
+
+The divergent build used plausible alternatives, not sabotage: a flexbox wall of
+`<article>` tiles instead of a `<ul>` grid, `stock.map` instead of `products.map`,
+a `<div>` top bar instead of `<nav>`, component names `Catalogue`/`MenuTile`/
+`TopBar`. Product listing and navigation scored `0/8` — correctly reported as *"no
+evidence found"* (Q4 held). Opening hours and allergens survived, rescued by
+unavoidable day names, `gluten` living in the data module, and even the `Dietary`
+component name matching the `dietary` signal.
+
+**The finding:** worst-case *legitimate* divergence costs the feature weights and
+nothing else — here 16 pts, floor **84 not 30**. The exact checks (50) and quality
+(18) are untouched, so **the low feature-weighting works exactly as this decision
+intended** — a correct-but-unrecognised build stays honestly scored, not gutted.
+Caveat: the feature nets also read README prose and link labels, so a feature can
+be credited from a *mention* (same false-positive family as D8).
+
 **Revisit if:** users report unfair scores on framework projects. The real fix is
 already scoped — **check the rendered DOM of the deployed site** instead of
 guessing from source (roadmap Phase 6). That turns the hardest check into an exact
-one and retires this whole compromise. If D2 starts hurting, pull Phase 6 forward.
+one and retires this whole compromise. The measurement above says D2 is bounded and
+non-urgent: pull Phase 6 forward when real submissions land unfairly (they'll land
+near 84, not 30), not before — and note Phase 6 now also retires D8.
 
 ---
 
@@ -201,3 +227,114 @@ written.
 
 **Revisit if:** the slice closes early. Then spend the remaining time on scenarios,
 not on difficulty levels.
+
+---
+
+## D8 — `seed_data_used` proves *presence*, not *display* — and that's Phase 6's second job
+
+**Decided:** 2026-07-11 · Found by building a real page and grading it, not by a test.
+
+`seed_data_used` is the heaviest item on the rubric (35 pts), the one labelled
+**exact**, and the one the whole scorecard's credibility leans on. It searches the
+entire concatenated source tree as text — and ingest reads `.csv`. So a submission
+that *commits the client's `products.csv`* (the normal thing a developer does, and
+**mandatory** if they load it at runtime) satisfies the check on its own, whether
+or not the page renders a single product.
+
+Measured on a blank "Coming soon" page against seed 4471:
+
+```
+blank page, no CSV committed:          28.5 / 100   seed_data  0 / 35
+blank page + products.csv committed:   68.3 / 100   seed_data 35 / 35
+   → "All 13 of the client's available products are in the build."
+```
+
+A page that renders **nothing** is told, as a *fact*, that it used every product.
+That is Q4 violated in the false-positive direction — and unearned credit
+discredits the card exactly as much as unfair blame does.
+
+**Why we're not just patching it.** There is no clean deterministic fix; every
+option trades one error for another:
+
+- *Exclude data files (`.csv`/`.json`) from the search* — breaks the legitimate
+  build that `fetch()`es the CSV at runtime, where the product names live **only**
+  in the CSV. That turns a working page into a `0 / 35` false negative.
+- *Count them* — rewards commit-and-don't-render, as above.
+
+This is the **same root cause as D2**: reading source as text cannot distinguish
+"rendered on the page" from "merely present somewhere in the repo." The
+`seed_data_used` check is therefore *presence-exact*, not *display-exact*, and we
+are naming that rather than pretending otherwise.
+
+**What we're doing:** documenting the blind spot (here, and in the check's
+docstring so a refactorer meets it at the code), and leaving the check as-is. It
+still does its main job well — inventing your own products still scores `0`.
+
+**The real fix is already on the roadmap.** Phase 6 (check the rendered DOM of the
+deployed site) retires this the same way it retires D2's feature-detection
+guessing — it turns "is the string in the repo" into "is the product on the page."
+**So Phase 6 now fixes two checks, not one. That is a second reason to pull it
+forward.**
+
+**Interim mitigation, if unfair scores show up before Phase 6:** exclude from *this
+check's* corpus any submitted file that is a verbatim copy of the exact seed CSV we
+generated. That kills the accidental "committed the untouched file" case while
+leaving dev-authored and transformed data counting. It accepts a false negative
+for the pure fetch-the-original-CSV-at-runtime build — which is itself
+indistinguishable from cheating without executing the page, so erring toward "show
+it in code you wrote" is defensible.
+
+**Revisit if:** Phase 6 lands (delete this compromise), **or** the false negative
+bites first (apply the interim mitigation, with a test).
+
+---
+
+## D9 — Supabase Auth for signup/login; identity is the only thing that leaves the disk
+
+**Decided:** 2026-07-11 · **Amends D5 and the vision's "no accounts" non-goal.**
+
+The app now has accounts: email + password signup and login, backed by
+**Supabase Auth** on the "fcg" Supabase project (`hkdufhortxeftkhpzpzf`,
+us-west-2). The whole Streamlit UI sits behind a login page.
+
+**Why:** the owner decided to tie the app to the existing Supabase project and
+put real authentication in front of it — the first step toward the app being
+usable by more than one person. This is a deliberate reversal of the "no
+accounts" line, made knowingly, not a drift.
+
+**Scope — deliberately narrow.** Identity moves to Supabase. *Nothing else
+does.* Projects, seed CSVs, rubrics, submissions, and scorecards remain files
+on disk exactly as D5 lays them out; `storage.py` is untouched. There is no
+user table of our own, no per-user partitioning, no RLS — Supabase Auth's
+built-in user store is the entire database footprint. D5 is amended, not
+repealed.
+
+**How the app talks to Supabase:** `app/auth.py` creates one client per
+browser session (deliberately *not* `st.cache_resource` — the client carries
+the signed-in user's tokens, and a process-wide cached client would share one
+user's session with everyone). It uses the project URL and the **publishable
+key** from `.streamlit/secrets.toml` (gitignored; a committed
+`secrets.toml.example` shows the shape). The publishable key is designed to be
+client-visible. The Management API access token — what the assistant-side MCP
+server authenticates with — is never used by, or available to, the app.
+
+**Distinct from the MCP server:** the read-only Supabase MCP connection in
+`~/.claude.json` is Claude Code tooling for the assistant. The app's runtime
+dependency is only on Supabase Auth via the publishable key. Removing either
+one does not affect the other.
+
+**Costs we accept:**
+- The app now needs network and a live Supabase project just to open. The
+  files-on-disk core still works without it (tests never touch auth), but the
+  UI does not.
+- Login state lives in `st.session_state`: per browser tab, gone on tab close
+  or server restart. No remember-me. Fine at this scale.
+- Email confirmation is on (Supabase's default), so signup needs a real inbox
+  before first login.
+- **Accounts authenticate; they do not yet isolate.** `data/generated/` is
+  still one shared directory — two people logging into the same machine see
+  the same saved projects. That is the honest edge of this decision's scope.
+
+**Revisit if:** FCG is actually deployed for multiple users. Then per-user data
+isolation lands in `storage.py` — the seam D5 reserved for exactly this — and
+that's a D10, with its own record.

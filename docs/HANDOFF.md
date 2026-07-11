@@ -15,7 +15,7 @@ tell you.
 **v1 is done and the loop closes.** Generate a brief → build the page yourself →
 paste a GitHub repo URL → get a score out of 100 with feedback per criterion.
 Verified end-to-end against a real cloned repo, including across an app restart.
-37 tests pass.
+50 tests pass.
 
 The four steps in [roadmap.md](roadmap.md) are all ✅. What's left is under
 "After today", in the order the pain will actually arrive.
@@ -24,6 +24,11 @@ The four steps in [roadmap.md](roadmap.md) are all ✅. What's left is under
 
 - Repo: `/Users/donovanbrown/Desktop/dev/project1`, pushed to
   **github.com/DCbrown/luigi-solutions-fcg** (public, `main`).
+- **`.streamlit/secrets.toml` is gitignored** and holds the Supabase project
+  URL + publishable key for auth (decisions.md D9). On a fresh clone, copy
+  `.streamlit/secrets.toml.example` and fill it from the Supabase dashboard
+  (project "fcg"). Without it the app won't open — the core library and tests
+  don't need it.
 - **`venv/` is at the repo root and is gitignored.** Python 3.14, pandas 3.0,
   streamlit 1.59. Use `venv/bin/python`, not the system one.
 - The package is **installed editable** (`pip install -e .`). That's why `app/`
@@ -32,6 +37,28 @@ The four steps in [roadmap.md](roadmap.md) are all ✅. What's left is under
 - Run it: `venv/bin/streamlit run app/main.py`. Tests: `venv/bin/python -m pytest`.
 - Git identity is set **repo-locally** (Donovan Brown / dess5000@gmail.com), and
   auth is via an ed25519 SSH key added on 2026-07-11. Pushes just work.
+
+## Auth (2026-07-11, decisions.md D9)
+
+The UI now sits behind email/password signup + login, backed by **Supabase
+Auth** on the "fcg" project. Read D9 before touching it — it is a deliberate,
+*bounded* amendment of D5: identity lives in Supabase, everything else is
+still files on disk, and accounts do **not** yet isolate `data/generated/`.
+
+Mechanics: `app/main.py` is now an `st.navigation` router — signed out you get
+only `app_pages/login.py`; signed in, the full page set. Pages moved from
+`app/pages/` to `app/app_pages/` (the old `pages/` name collides with
+Streamlit's legacy auto-discovery, which would have shown every page without
+login). `app/auth.py` wraps the Supabase client — created **per browser
+session, not `st.cache_resource`**, because the client carries the user's
+tokens; don't "optimise" that. Logout calls `st.session_state.clear()` on
+purpose, so the next user in the tab doesn't inherit a project or score.
+
+Verified: the publishable key round-trips against the live Auth endpoint
+(wrong creds → `Invalid login credentials`), and both auth states render via
+`AppTest`. **Not yet done: one real signup with a real inbox** — email
+confirmation is on (Supabase default), and nobody has clicked the
+confirmation link end-to-end yet.
 
 ## The thing that actually needs doing next
 
@@ -85,6 +112,15 @@ column that's already bool matches nothing, yields `NaN` — and **`NaN` is trut
 so every product silently becomes available. The dtype check guarding that is not
 paranoia; the bug was introduced by the fix for itself and caught by
 `test_storage.py`.
+
+And a sixth, at the top of `app/main.py`: `ARROW_DEFAULT_MEMORY_POOL=system`.
+On 2026-07-11 the running app segfaulted (exit 139) in **pyarrow 25.0's bundled
+mimalloc** while Arrow-serialising a DataFrame on a Streamlit script thread —
+crash report `Python-2026-07-11-153102.ips`, stack through `NdarrayToArrow →
+mi_thread_init`. Not reproducible in isolation (250 threaded conversions pass),
+so the env var routes Arrow to the system allocator instead of mimalloc. It is
+read once, at pyarrow import — which is why it's set before any other import in
+main.py. Moving it below an import that pulls in pyarrow silently disables it.
 
 ## The rule that holds all of it together
 

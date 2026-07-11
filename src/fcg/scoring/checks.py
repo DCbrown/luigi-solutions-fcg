@@ -121,6 +121,14 @@ def seed_data_used(ctx: CheckContext) -> tuple[float, str]:
     "Country Sourdough" then that string is *somewhere* in the source. This is the
     heaviest item on the rubric, and the brief was loudest about it.
 
+    NOTE (D8): "somewhere in the source" is the blind spot. This searches the whole
+    tree, and ingest reads `.csv` — so a committed copy of the client's own
+    products.csv satisfies this check even if the page renders nothing. It is
+    *presence*-exact, not *display*-exact. Don't "fix" that by excluding data
+    files: a page that fetches the CSV at runtime keeps the names *only* there, and
+    you'd turn a working build into a 0. The real fix is Phase 6 (check the rendered
+    DOM), the same fix D2 needs. See docs/decisions.md D8.
+
     Only the **available** products are required. The seed data deliberately marks
     one item unavailable, and hiding it is a perfectly reasonable reading of the
     brief — a scorer that docked marks for that would be punishing good judgment.

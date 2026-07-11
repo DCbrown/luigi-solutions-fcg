@@ -3,3 +3,4 @@ pandas>=3.0
 numpy>=2.5
 Faker>=37.0
 pytest>=8.0
+supabase>=2.31

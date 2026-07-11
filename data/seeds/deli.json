@@ -1,0 +1,94 @@
+{
+  "scenario": "deli_order_page",
+  "industry": "food & drink",
+  "size": "small business",
+  "sku_prefix": "DL",
+  "background_template": "{name} has run a deli counter out of {location} since {founded}. One long counter, a cold case, and a lunch rush that starts at noon sharp. {quirk}",
+  "company_first": ["Alberto's", "The Larder", "Olive & Vine", "Saltbox", "Provisions", "Nonna's", "Greenfield", "Marchetti's", "The Corner", "Salt & Cure", "Figs", "The Deli Counter"],
+  "company_last": ["Deli", "Delicatessen", "Deli & Grocer", "Fine Foods", "Provisions", "Deli & Wine"],
+  "neighbourhoods": ["a narrow unit on the market row", "the corner of the high street", "a railway arch by the station", "a shopfront next to the town hall", "the old cheesemonger's on Cross Street", "a spot beside the greengrocer"],
+  "founded": ["2011", "2016", "2019", "2003", "2021", "1998"],
+  "quirks": [
+    "The counter still slices everything to order, and the lunch queue has made its peace with that.",
+    "The owner drives to Italy every August and comes back with a car full of things nobody asked for.",
+    "They have kept the same handwritten specials board since the day they opened.",
+    "Half the regulars order the exact same sandwich daily and take it personally when it is off.",
+    "The owner knows everyone's usual and will gently judge you for changing it.",
+    "Everything gets wrapped in paper and string, which takes ages, and the regulars would riot if it stopped."
+  ],
+  "pains": [
+    "we lose lunch orders because the phone does not stop between twelve and two",
+    "people ask what is in every sandwich and we answer the same thing forty times a day",
+    "we cannot keep the prices on the counter and the prices online in step",
+    "half our regulars want to know what is vegetarian before they have reached the counter",
+    "people turn up asking for things we only put out on certain days"
+  ],
+  "roles": ["Owner", "Counter Manager", "Owner & Buyer", "Shop Manager", "Head of Counter"],
+  "products": [
+    {"name": "Aged Comté", "category": "Cheese", "price": 6.5, "description": "Twenty-four months, nutty and crystalline.", "allergens": "milk"},
+    {"name": "Buffalo Mozzarella", "category": "Cheese", "price": 4.5, "description": "In brine. Use it today, not tomorrow.", "allergens": "milk"},
+    {"name": "Prosciutto di Parma", "category": "Charcuterie", "price": 7.8, "description": "Eighteen months, sliced to order.", "allergens": ""},
+    {"name": "Nduja", "category": "Charcuterie", "price": 5.2, "description": "Spreadable, spicy, from Calabria.", "allergens": ""},
+    {"name": "Wild Boar Salami", "category": "Charcuterie", "price": 6.0, "description": "Coarse cut, gamey, a little fennel.", "allergens": ""},
+    {"name": "Marinated Gordal Olives", "category": "Antipasti", "price": 4.0, "description": "Fat, green, more garlic than sense.", "allergens": ""},
+    {"name": "Truffle & Porcini Pâté", "category": "Antipasti", "price": 5.8, "description": "More truffle than is strictly reasonable.", "allergens": ""},
+    {"name": "Sun-dried Tomato Focaccia", "category": "Bread", "price": 3.6, "description": "Baked next door, in by nine.", "allergens": "gluten"},
+    {"name": "The Italian Job", "category": "Sandwiches", "price": 6.5, "description": "Mortadella, provolone, pickles, on ciabatta.", "allergens": "gluten, milk"},
+    {"name": "Roasted Veg & Hummus Wrap", "category": "Sandwiches", "price": 5.5, "description": "The vegetarian one people actually reorder.", "allergens": "gluten, sesame"},
+    {"name": "Fresh Tagliatelle", "category": "Fresh Pasta", "price": 4.2, "description": "Egg pasta, rolled this morning.", "allergens": "gluten, egg"},
+    {"name": "Cornichons", "category": "Pantry", "price": 3.2, "description": "Sharp little French pickles.", "allergens": "mustard"},
+    {"name": "Taralli", "category": "Pantry", "price": 2.8, "description": "Little Pugliese rings, fennel seed.", "allergens": "gluten"},
+    {"name": "Balsamic, 12-Year", "category": "Pantry", "price": 9.5, "description": "Thick, syrupy, worth the shelf space.", "allergens": ""}
+  ],
+  "awkward": [
+    {"sku": "DL-101", "name": "Aged Parmigiano Reggiano, Vacche Rosse, 30-Month (Whole Wedge, Cut to Order)", "category": "Cheese", "price": 11.0, "description": "The good one. We get a handful of wheels a year.", "allergens": "milk", "available": true},
+    {"sku": "DL-102", "name": "Buyer's Antipasti Board", "category": "Antipasti", "price": 14.5, "description": "", "allergens": "milk, gluten, sulphites", "available": true},
+    {"sku": "DL-103", "name": "Jamón Ibérico & Manchego Selection", "category": "Charcuterie", "price": 9.9, "description": "Sells out most Saturdays before noon.", "allergens": "milk", "available": false}
+  ],
+  "features": [
+    {
+      "id": "product_grid",
+      "name": "product listing",
+      "description": "Show the whole counter — everything we sell, the price, and what is in it. That is the entire point of the page.",
+      "signals": ["<ul", "<li", "grid", "card", "ProductList", "ProductCard", "ProductGrid", "MenuItem", "products.map", "items.map", "v-for", "{#each", "class=\"product", "className=\"product", "class=\"menu", "className=\"menu", "class=\"item", "className=\"item"]
+    },
+    {
+      "id": "contact_form",
+      "name": "contact form",
+      "description": "Let people put in a lunch order or ask a question without ringing the counter.",
+      "signals": ["<form", "<textarea", "type=\"email\"", "type=email", "ContactForm", "OrderForm", "onSubmit", "@submit", "on:submit", "handleSubmit", "<label"]
+    },
+    {
+      "id": "opening_hours",
+      "name": "opening hours",
+      "description": "Put our hours where people will actually see them. We are shut Sundays.",
+      "signals": ["opening", "hours", "Mon", "Monday", "Tuesday", "closed", "Closed", "OpeningHours", "Hours", "<time"]
+    },
+    {
+      "id": "category_filter",
+      "name": "category filter",
+      "description": "People want just the cheese, or just the sandwiches. Let them narrow it down.",
+      "signals": ["filter", "Filter", "<select", "category", "Category", "onChange", "@change", "on:change", "activeCategory", "selectedCategory", "data-category", "tab", "Tab"]
+    },
+    {
+      "id": "allergen_info",
+      "name": "allergen information",
+      "description": "We get asked what is in everything all day. Put it on the page so we can stop repeating ourselves.",
+      "signals": ["allergen", "Allergen", "gluten", "Gluten", "dietary", "contains"]
+    },
+    {
+      "id": "site_nav",
+      "name": "navigation",
+      "description": "A way to move around the page. Nothing fancy.",
+      "signals": ["<nav", "Navbar", "NavBar", "Navigation", "<header", "role=\"navigation\"", "class=\"nav", "className=\"nav"]
+    }
+  ],
+  "constraints": [
+    "It has to work on a phone. Most of our lunch orders come from people walking over on their break.",
+    "Our brand colour is #3A5A40. Please use it.",
+    "No carousels. We had one once; nobody ever saw the second slide.",
+    "Don't invent products. If it isn't on the counter, it doesn't go on the page.",
+    "The prices on the page have to match the file we sent. To the penny.",
+    "Nothing that plays sound on its own. We're a deli."
+  ]
+}

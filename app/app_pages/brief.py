@@ -2,7 +2,6 @@
 
 import streamlit as st
 
-st.set_page_config(page_title="The brief — FCG", page_icon="📁")
 st.title("The brief")
 
 project = st.session_state.get("project")
@@ -10,7 +9,7 @@ seed_data = st.session_state.get("seed_data")
 
 if project is None:
     st.warning("No project yet.")
-    st.page_link("pages/1_Generate.py", label="Generate one →")
+    st.page_link("app_pages/generate.py", label="Generate one →")
     st.stop()
 
 client = project.client
@@ -57,4 +56,4 @@ st.download_button(
 )
 
 st.info("Go and build it. When you're done, push it to GitHub and come back.")
-st.page_link("pages/3_Submit_and_Score.py", label="Submit your work →")
+st.page_link("app_pages/submit.py", label="Submit your work →")

@@ -16,11 +16,19 @@ from fcg.generator.client import generate_client
 from fcg.generator.dataset import generate_seed_data
 from fcg.models import Project
 
-SCENARIO = "bakery"  # v1 ships one scenario — docs/decisions.md D7
+DEFAULT_SCENARIO = "bakery"
+# `scenario` is an explicit parameter, NOT a seeded random choice. That's the whole
+# point of the walking skeleton: it proves the generator is scenario-agnostic
+# without touching the RNG draw order, so every existing seed still reproduces the
+# exact same project it always did (Q2). Wiring scenario selection into the seed —
+# so a random seed spreads across scenarios — is a deliberate later step, because
+# it renumbers the project space and that's a one-way door once seeds are shared.
 
 
 def generate_project(
-    seed: int | None = None, difficulty: str = "medium"
+    seed: int | None = None,
+    difficulty: str = "medium",
+    scenario: str = DEFAULT_SCENARIO,
 ) -> tuple[Project, pd.DataFrame]:
     """Build a complete, self-consistent fictional engagement.
 
@@ -35,16 +43,16 @@ def generate_project(
 
     rng = random.Random(seed)
 
-    client = generate_client(rng, SCENARIO)
-    brief = generate_brief(rng, client, difficulty)
-    seed_data = generate_seed_data(rng, SCENARIO, difficulty)
+    client = generate_client(rng, scenario)
+    brief = generate_brief(rng, client, difficulty, scenario)
+    seed_data = generate_seed_data(rng, scenario, difficulty)
     rubric = generate_rubric(rng, brief)
 
     project = Project(
-        id=f"{SCENARIO}-{seed}",
+        id=f"{scenario}-{seed}",
         seed=seed,
         difficulty=difficulty,
-        scenario=SCENARIO,
+        scenario=scenario,
         client=client,
         brief=brief,
         rubric=rubric,

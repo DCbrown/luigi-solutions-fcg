@@ -10,7 +10,8 @@ from fcg.generator import generate_project
 from fcg.generator.brief import MANDATORY_FEATURES
 
 
-def test_same_seed_reproduces_the_same_project():
+@pytest.mark.parametrize("scenario", ["bakery", "deli"])
+def test_same_seed_reproduces_the_same_project(scenario):
     """quality.md Q2 — the property the whole app rests on.
 
     If a seed doesn't reproduce, projects aren't shareable, scores aren't
@@ -18,9 +19,12 @@ def test_same_seed_reproduces_the_same_project():
 
     `created_at` is excluded deliberately: it's provenance, not generated content,
     and it's the only field allowed to differ between two runs of a seed.
+
+    Parametrized over scenario: the guarantee has to hold for every scenario, and
+    the bakery case doubles as proof the scenario refactor left it untouched.
     """
-    p1, d1 = generate_project(seed=4471)
-    p2, d2 = generate_project(seed=4471)
+    p1, d1 = generate_project(seed=4471, scenario=scenario)
+    p2, d2 = generate_project(seed=4471, scenario=scenario)
 
     fixed = date(2000, 1, 1)
     assert replace(p1, created_at=fixed) == replace(p2, created_at=fixed)
@@ -33,16 +37,34 @@ def test_different_seeds_produce_different_projects():
     assert p1.client.name != p2.client.name or p1.brief.features != p2.brief.features
 
 
-def test_the_product_listing_is_always_required():
+def test_a_second_scenario_flows_through_and_reads_like_itself():
+    """The walking skeleton's whole point: a non-bakery scenario runs the entire
+    generator end to end and leaks no bakery-specific prose or products."""
+    project, data = generate_project(seed=4471, scenario="deli")
+
+    assert project.scenario == "deli"
+    assert project.id == "deli-4471"
+    assert project.client.industry == "food & drink"
+    assert "baking" not in project.client.background.lower()
+    assert "deli counter" in project.client.background.lower()
+
+    # Same seed, different scenario -> a different company and the deli's own SKUs.
+    bakery, _ = generate_project(seed=4471, scenario="bakery")
+    assert project.client.name != bakery.client.name
+    assert data["sku"].str.startswith("DL").all()
+
+
+@pytest.mark.parametrize("scenario", ["bakery", "deli"])
+def test_the_product_listing_is_always_required(scenario):
     """35 points ride on the client's products appearing in the build.
 
     A brief that didn't ask for a product listing would be grading the user on
     something it never requested.
     """
     for seed in range(25):
-        project, _ = generate_project(seed=seed)
+        project, _ = generate_project(seed=seed, scenario=scenario)
         ids = {f.id for f in project.brief.features}
-        assert MANDATORY_FEATURES <= ids, f"seed {seed} dropped the product listing"
+        assert MANDATORY_FEATURES <= ids, f"{scenario} seed {seed} dropped the product listing"
 
 
 def test_every_rubric_item_traces_back_to_the_brief():
@@ -70,10 +92,14 @@ def test_exact_checks_outweigh_heuristic_ones():
     assert exact >= heuristic
 
 
+@pytest.mark.parametrize("scenario", ["bakery", "deli"])
 @pytest.mark.parametrize("seed", range(10))
-def test_seed_data_always_contains_the_awkward_rows(seed):
-    """requirements.md R1.4 — real content, not the tidy content they'd invent."""
-    _, data = generate_project(seed=seed)
+def test_seed_data_always_contains_the_awkward_rows(seed, scenario):
+    """requirements.md R1.4 — real content, not the tidy content they'd invent.
+
+    Awkward rows live in the pool now, so every scenario has to carry its own.
+    """
+    _, data = generate_project(seed=seed, scenario=scenario)
 
     assert data["name"].str.len().max() > 40, "no name long enough to break a card"
     assert data["description"].isna().any() or (data["description"] == "").any()

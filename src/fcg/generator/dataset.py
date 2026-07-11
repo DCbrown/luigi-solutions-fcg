@@ -23,57 +23,31 @@ ROW_COUNT = {"easy": 10, "medium": 14, "hard": 18}
 COLUMNS = ["sku", "name", "category", "price", "description", "allergens", "available"]
 
 
-def _awkward_rows(rng: random.Random) -> list[dict]:
-    """The rows that break a naive layout. Every dataset gets these."""
-    return [
-        {
-            # Too long for a tidy card. Forces them to think about overflow.
-            "sku": "BK-101",
-            "name": "Sourdough Loaf with Kalamata Olive, Rosemary and Sea Salt (Large Tin)",
-            "category": "Bread",
-            "price": 7.25,
-            "description": "Our Saturday special. Sells out by ten, every week, without fail.",
-            "allergens": "gluten",
-            "available": True,
-        },
-        {
-            # Empty optional field. Their template had better cope.
-            "sku": "BK-102",
-            "name": "Baker's Choice Box",
-            "category": "Bread",
-            "price": 12.0,
-            "description": "",
-            "allergens": "gluten, milk, egg, nuts",
-            "available": True,
-        },
-        {
-            # Accent and an ampersand. Escaping, or a mangled page.
-            "sku": "BK-103",
-            "name": "Pain au Chocolat & Crème Pâtissière Twist",
-            "category": "Pastry",
-            "price": 4.1,
-            "description": "The one the owner's daughter insisted on.",
-            "allergens": "gluten, milk, egg",
-            "available": False,  # not available — does the page show that?
-        },
-    ]
-
-
 def generate_seed_data(
     rng: random.Random, scenario: str = "bakery", difficulty: str = "medium"
 ) -> pd.DataFrame:
-    """Build the client's product table."""
+    """Build the client's product table.
+
+    Every dataset gets the scenario's **awkward rows** — a name too long for a tidy
+    card, an empty description, an accent-and-ampersand, one item sold out. These
+    used to be hardcoded bakery products; they live in the pool now, so each
+    scenario supplies edge cases that look like its own content (a deli's long name
+    is a whole cheese wedge, not a sourdough). They carry fixed SKUs and consume no
+    RNG, so the draw order — and every existing seed's output — is unchanged.
+    """
     pool = load_pool(scenario)
 
     n = ROW_COUNT.get(difficulty, 14)
-    awkward = _awkward_rows(rng)
+    # Copy each row: the pool is lru_cached, and these dicts must not be mutated.
+    awkward = [dict(row) for row in pool["awkward"]]
     n_normal = max(n - len(awkward), 1)
 
     chosen = rng.sample(pool["products"], min(n_normal, len(pool["products"])))
 
+    prefix = pool["sku_prefix"]
     rows = [
         {
-            "sku": f"BK-{200 + i}",
+            "sku": f"{prefix}-{200 + i}",
             "name": p["name"],
             "category": p["category"],
             "price": p["price"],

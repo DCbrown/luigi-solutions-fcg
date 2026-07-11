@@ -33,9 +33,20 @@ W_PER_FEATURE = 8
 W_QUALITY = 18
 
 
-def generate_brief(rng: random.Random, client: Client, difficulty: str = "medium") -> Brief:
-    """Pick what this client wants built and why."""
-    pool = load_pool("bakery")
+def generate_brief(
+    rng: random.Random,
+    client: Client,
+    difficulty: str = "medium",
+    scenario: str = "bakery",
+) -> Brief:
+    """Pick what this client wants built and why.
+
+    The ask and context prose below is deliberately domain-neutral — it reads the
+    same whether the client is a bakery or a deli, because it only ever talks about
+    "what we sell" and "the phone", never "bread". Everything scenario-specific
+    (products, features, constraints, the pain being solved) comes from the pool.
+    """
+    pool = load_pool(scenario)
 
     n_features = FEATURE_COUNT.get(difficulty, 4)
     n_constraints = CONSTRAINT_COUNT.get(difficulty, 2)

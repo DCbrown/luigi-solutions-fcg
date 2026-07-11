@@ -5,7 +5,6 @@ import streamlit as st
 from fcg.generator import generate_project
 from fcg.storage import save_project
 
-st.set_page_config(page_title="Generate — FCG", page_icon="📁")
 st.title("Generate a project")
 
 st.write(
@@ -32,4 +31,4 @@ if st.button("Generate", type="primary"):
     st.session_state.pop("score", None)  # a new project invalidates the old score
 
     st.success(f"**{project.client.name}** needs a page. Seed `{project.seed}`.")
-    st.page_link("pages/2_Brief.py", label="Read the brief →")
+    st.page_link("app_pages/brief.py", label="Read the brief →")

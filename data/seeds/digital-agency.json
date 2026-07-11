@@ -1,0 +1,94 @@
+{
+  "scenario": "digital_agency_services_page",
+  "industry": "creative services",
+  "size": "small business",
+  "sku_prefix": "DA",
+  "background_template": "{name} has been building things for other people since {founded}, out of {location}. Small team, no account managers, and a client list they'd rather show than describe. {quirk}",
+  "company_first": ["Pixel & Thread", "Northlight", "Studio Fen", "Halftone", "Cursor & Co", "Paper Plane", "Bright Array", "Monogram", "Ampersand", "Grid & Gutter", "Softserve", "Kerning House"],
+  "company_last": ["Studio", "Digital", "Creative", "Agency", "Collective", "Works"],
+  "neighbourhoods": ["a shared floor in the old textile mill", "two desks and a meeting room above the record shop", "a studio at the back of the co-working space", "the loft over the framers on Bridge Street", "a unit in the converted tram depot", "a corner of the enterprise hub"],
+  "founded": ["2013", "2016", "2018", "2020", "2021", "2010"],
+  "quirks": [
+    "Every project ends with a handover document nobody reads and everybody keeps.",
+    "The studio dog has a job title and appears in more pitch decks than the founders.",
+    "They still send invoices with a hand-drawn thank-you doodle in the corner.",
+    "There is a wall of rejected logo concepts they call the museum of nearly.",
+    "Client calls happen at the big table because the meeting room became the plant room.",
+    "The founders met arguing about a typeface in someone else's comment section."
+  ],
+  "pains": [
+    "prospects email asking what we actually do, which stings a bit",
+    "our services and prices live in a PDF nobody can ever find",
+    "people assume we only do logos, and we do rather more than logos",
+    "leads ring for a ballpark and we quote the same three packages every single time",
+    "our own site has said 'new site coming soon' since 2023, which is not a great look"
+  ],
+  "roles": ["Founder", "Creative Director", "Co-Founder", "Studio Manager", "Head of Delivery"],
+  "products": [
+    {"name": "Brand Identity Sprint", "category": "Branding", "price": 1800.0, "description": "Two weeks. Logo, palette, type, and the rules for using them.", "allergens": ""},
+    {"name": "Logo Refresh", "category": "Branding", "price": 600.0, "description": "Your mark, tidied — not reinvented.", "allergens": ""},
+    {"name": "Social Media Kit", "category": "Branding", "price": 350.0, "description": "Templates your team can actually use without breaking them.", "allergens": ""},
+    {"name": "Landing Page Build", "category": "Web", "price": 950.0, "description": "One page, fast, that says the thing and asks for the click.", "allergens": ""},
+    {"name": "E-commerce Setup", "category": "Web", "price": 2200.0, "description": "Shop, payments, shipping rules. Yours by the end.", "allergens": ""},
+    {"name": "Website Care Plan (Monthly)", "category": "Retainers", "price": 120.0, "description": "Updates, backups, and someone to ring when it breaks.", "allergens": ""},
+    {"name": "SEO Audit", "category": "Strategy", "price": 450.0, "description": "Where you rank, why, and what to do about it. No dark arts.", "allergens": ""},
+    {"name": "Analytics Setup & Training", "category": "Strategy", "price": 380.0, "description": "Know what's working without needing us to translate.", "allergens": ""},
+    {"name": "Copywriting Day", "category": "Content", "price": 480.0, "description": "A day of words from someone who does words for a living.", "allergens": ""},
+    {"name": "Pitch Deck Design", "category": "Content", "price": 700.0, "description": "Your numbers, dressed for the room they're going into.", "allergens": ""},
+    {"name": "Illustration Pack", "category": "Content", "price": 520.0, "description": "Six spot illustrations, drawn for you, owned by you.", "allergens": ""},
+    {"name": "Email Template Design", "category": "Content", "price": 320.0, "description": "Newsletters that survive every inbox we could find.", "allergens": ""},
+    {"name": "Hosting & Domains (Annual)", "category": "Retainers", "price": 180.0, "description": "The boring plumbing, handled and renewed on time.", "allergens": ""},
+    {"name": "Discovery Workshop", "category": "Strategy", "price": 550.0, "description": "Half a day of the right questions before anyone designs anything.", "allergens": ""}
+  ],
+  "awkward": [
+    {"sku": "DA-101", "name": "Full Brand & Website Overhaul — Discovery, Identity, Design System, Build & Handover (6–8 Weeks)", "category": "Web", "price": 6500.0, "description": "The big one. Everything above, in the right order.", "allergens": "", "available": true},
+    {"sku": "DA-102", "name": "Founder's Day Rate", "category": "Strategy", "price": 750.0, "description": "", "allergens": "", "available": true},
+    {"sku": "DA-103", "name": "Website MOT & Speed Tune-Up", "category": "Web", "price": 280.0, "description": "Waitlist only — we're booked through the quarter.", "allergens": "", "available": false}
+  ],
+  "features": [
+    {
+      "id": "product_grid",
+      "name": "services listing",
+      "description": "Everything we sell, with the price next to it. If people can see what things cost, the ballpark phone calls stop.",
+      "signals": ["<ul", "<li", "grid", "card", "ServiceList", "ServiceCard", "ProductList", "ProductCard", "PriceCard", "services.map", "products.map", "items.map", "packages.map", "v-for", "{#each", "class=\"service", "className=\"service", "class=\"product", "className=\"product", "class=\"card", "className=\"card"]
+    },
+    {
+      "id": "contact_form",
+      "name": "contact form",
+      "description": "Name, email, what they need, rough budget. That's a brief, and briefs beat ballpark calls.",
+      "signals": ["<form", "<textarea", "type=\"email\"", "type=email", "ContactForm", "EnquiryForm", "onSubmit", "@submit", "on:submit", "handleSubmit", "<label"]
+    },
+    {
+      "id": "testimonials",
+      "name": "client testimonials",
+      "description": "Two or three real quotes from clients. People trust other people, not us saying we're good.",
+      "signals": ["testimonial", "Testimonial", "<blockquote", "<q", "quote", "Quote", "cite", "clients say", "Review", "review"]
+    },
+    {
+      "id": "faq",
+      "name": "FAQ section",
+      "description": "The five questions every prospect asks, answered once, on the page.",
+      "signals": ["faq", "FAQ", "Faq", "<details", "<summary", "accordion", "Accordion", "question", "Question", "frequently"]
+    },
+    {
+      "id": "category_filter",
+      "name": "service filter",
+      "description": "Let people narrow to just branding, or just web. Nobody needs all of it at once.",
+      "signals": ["filter", "Filter", "<select", "category", "Category", "onChange", "@change", "on:change", "activeCategory", "selectedCategory", "data-category", "tab", "Tab"]
+    },
+    {
+      "id": "site_nav",
+      "name": "navigation",
+      "description": "A way to move around the page. We will absolutely judge it, but keep it simple.",
+      "signals": ["<nav", "Navbar", "NavBar", "Navigation", "<header", "role=\"navigation\"", "class=\"nav", "className=\"nav"]
+    }
+  ],
+  "constraints": [
+    "It has to work on a phone. Our clients check us from trains.",
+    "Our brand colour is #1F3A5F. Please use it.",
+    "No jargon. If it says 'synergy' or 'solutions', we rewrite it.",
+    "Don't invent services. If it isn't in the file, we don't sell it.",
+    "The prices on the page have to match the file we sent. Exactly.",
+    "It has to load fast. We sell websites; ours being slow is fatal."
+  ]
+}

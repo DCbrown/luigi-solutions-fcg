@@ -1,0 +1,94 @@
+{
+  "scenario": "photography_packages_page",
+  "industry": "creative services",
+  "size": "small business",
+  "sku_prefix": "PH",
+  "background_template": "{name} has been shooting out of {location} since {founded}. One photographer, one battered camera bag, and a diary that fills up by March. {quirk}",
+  "company_first": ["Field & Frame", "Golden Hour", "Aperture Lane", "Stillwater", "The Long Exposure", "Birch & Light", "Second Shutter", "Quiet North", "Fern Hollow", "Silver Grain", "Open Sky", "Lena Marsh"],
+  "company_last": ["Photography", "Photo Studio", "Studio", "Photographic", "Pictures", "& Co Photography"],
+  "neighbourhoods": ["a daylight studio over the antiques market", "a converted stable block just outside town", "the top floor of the old telephone exchange", "a lock-up studio behind the framers", "a shared studio in the arts centre", "a garden studio at the end of the lane"],
+  "founded": ["2008", "2013", "2016", "2018", "2021", "2011"],
+  "quirks": [
+    "The studio sofa has appeared in more family portraits than any family.",
+    "They shoot film for themselves and digital for everyone else, and won't explain the difference twice.",
+    "Every wedding ends with one frame of the photographer's shoes. It's a whole thing.",
+    "The backdrop collection has its own insurance policy.",
+    "Clients get their galleries with a handwritten note. Always have, always will.",
+    "There's a print on the wall that isn't for sale and everyone asks anyway."
+  ],
+  "pains": [
+    "everyone emails asking the same three things: prices, travel, and how many photos they get",
+    "our packages live in a PDF from 2022 with the wrong prices on it",
+    "people don't know we do family shoots as well as weddings",
+    "enquiries arrive at midnight wanting an answer by breakfast",
+    "half the calls are just people asking if a date is free"
+  ],
+  "roles": ["Photographer & Owner", "Owner", "Photographer", "Studio Manager", "Bookings Manager"],
+  "products": [
+    {"name": "Wedding — Full Day", "category": "Weddings", "price": 1450.0, "description": "Prep to first dance. Two of everything important.", "allergens": ""},
+    {"name": "Wedding — Half Day", "category": "Weddings", "price": 850.0, "description": "Ceremony through speeches. The greatest hits.", "allergens": ""},
+    {"name": "Engagement Shoot", "category": "Weddings", "price": 220.0, "description": "An hour somewhere that matters to you. Practice for the big one.", "allergens": ""},
+    {"name": "Family Session (90 min)", "category": "Portraits", "price": 180.0, "description": "Park or studio. Chaos welcome, encouraged even.", "allergens": ""},
+    {"name": "Newborn Session", "category": "Portraits", "price": 210.0, "description": "Slow, warm, unhurried. Babies set the schedule.", "allergens": ""},
+    {"name": "Portrait Session (Studio)", "category": "Portraits", "price": 140.0, "description": "One hour, one person, proper light.", "allergens": ""},
+    {"name": "Pet Portraits", "category": "Portraits", "price": 130.0, "description": "Yes, really. Bring treats and low expectations of dignity.", "allergens": ""},
+    {"name": "Headshots — Individual", "category": "Commercial", "price": 120.0, "description": "Twenty minutes to a LinkedIn photo that looks like you.", "allergens": ""},
+    {"name": "Headshots — Team Half-Day", "category": "Commercial", "price": 480.0, "description": "The whole office, matched and consistent, in one morning.", "allergens": ""},
+    {"name": "Event Coverage (Hourly)", "category": "Events", "price": 95.0, "description": "Launches, parties, talks. Two-hour minimum.", "allergens": ""},
+    {"name": "Fine Art Print — A3", "category": "Prints & Albums", "price": 45.0, "description": "Giclée on cotton rag. From any gallery image.", "allergens": ""},
+    {"name": "Fine Art Print — A2", "category": "Prints & Albums", "price": 65.0, "description": "The one that goes above the sofa.", "allergens": ""},
+    {"name": "Album — 30-Page Linen", "category": "Prints & Albums", "price": 240.0, "description": "Designed, proofed, and bound to outlive us all.", "allergens": ""},
+    {"name": "Gift Voucher", "category": "Portraits", "price": 100.0, "description": "For the person who has everything except photos of themselves.", "allergens": ""}
+  ],
+  "awkward": [
+    {"sku": "PH-101", "name": "Wedding — Two Photographers, Full Weekend Coverage incl. Rehearsal Dinner & Sunday Brunch (Limited Dates)", "category": "Weddings", "price": 2950.0, "description": "The whole weekend, told properly. Two a year, no more.", "allergens": "", "available": true},
+    {"sku": "PH-102", "name": "Mini Session — Seasonal", "category": "Portraits", "price": 95.0, "description": "", "allergens": "", "available": true},
+    {"sku": "PH-103", "name": "Autumn Golden Hour Sessions", "category": "Portraits", "price": 160.0, "description": "Book in August. They go in a day.", "allergens": "", "available": false}
+  ],
+  "features": [
+    {
+      "id": "product_grid",
+      "name": "packages & prices listing",
+      "description": "Every package and print with its price. If it's on the page, nobody has to email asking.",
+      "signals": ["<ul", "<li", "grid", "card", "PackageList", "PackageCard", "PriceCard", "ProductList", "ProductCard", "packages.map", "products.map", "items.map", "services.map", "v-for", "{#each", "class=\"package", "className=\"package", "class=\"product", "className=\"product", "class=\"card", "className=\"card"]
+    },
+    {
+      "id": "contact_form",
+      "name": "booking enquiry form",
+      "description": "Name, email, the date, and what kind of shoot. The date matters most — lead with the date.",
+      "signals": ["<form", "<textarea", "type=\"email\"", "type=email", "type=\"date\"", "ContactForm", "BookingForm", "EnquiryForm", "onSubmit", "@submit", "on:submit", "handleSubmit", "<label"]
+    },
+    {
+      "id": "portfolio_gallery",
+      "name": "portfolio gallery",
+      "description": "A proper gallery of our work. The photos do the selling; the page just has to get out of their way.",
+      "signals": ["gallery", "Gallery", "portfolio", "Portfolio", "lightbox", "Lightbox", "<figure", "figcaption", "masonry", "Masonry", "grid-item", "GalleryGrid"]
+    },
+    {
+      "id": "testimonials",
+      "name": "client testimonials",
+      "description": "A few kind words from past couples and clients. People book people.",
+      "signals": ["testimonial", "Testimonial", "<blockquote", "<q", "quote", "Quote", "cite", "clients say", "Review", "review"]
+    },
+    {
+      "id": "category_filter",
+      "name": "shoot type filter",
+      "description": "Weddings, portraits, commercial — let people jump to the one they came for.",
+      "signals": ["filter", "Filter", "<select", "category", "Category", "onChange", "@change", "on:change", "activeCategory", "selectedCategory", "data-category", "tab", "Tab"]
+    },
+    {
+      "id": "site_nav",
+      "name": "navigation",
+      "description": "A way to move around the page. Nothing that upstages the photographs.",
+      "signals": ["<nav", "Navbar", "NavBar", "Navigation", "<header", "role=\"navigation\"", "class=\"nav", "className=\"nav"]
+    }
+  ],
+  "constraints": [
+    "It has to work on a phone. Couples plan weddings from bed.",
+    "Our brand colour is #4A5759. Please use it.",
+    "Big images. If the photos are small, the page has failed.",
+    "Don't invent packages. If it isn't in the file, we don't offer it.",
+    "The prices on the page have to match the file we sent. Exactly.",
+    "No music. No sound at all. Ever."
+  ]
+}

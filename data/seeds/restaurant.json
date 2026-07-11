@@ -1,0 +1,94 @@
+{
+  "scenario": "restaurant_menu_page",
+  "industry": "food & drink",
+  "size": "small business",
+  "sku_prefix": "RS",
+  "background_template": "{name} has been feeding {location} since {founded}. Forty covers, a short menu that follows the market, and a pass that runs hot from seven. {quirk}",
+  "company_first": ["Hearth", "Juniper", "The Copper Pot", "Marrow", "Ember", "Salt & Smoke", "The Old Dairy", "Harbour Light", "Fig & Fennel", "The Winter Table", "Bracken", "The Whistling Kettle"],
+  "company_last": ["Restaurant", "Kitchen", "Bistro", "Dining Room", "Brasserie", "Supper Rooms"],
+  "neighbourhoods": ["the old bank building on the square", "a converted chapel off the high street", "the ground floor of the Corn Exchange", "a candlelit room above the wine shop", "the end of the harbour row", "a dining room behind the butcher's"],
+  "founded": ["2005", "2012", "2015", "2018", "2021", "1997"],
+  "quirks": [
+    "The menu is written by hand every morning and photographed badly every lunchtime.",
+    "Table nine wobbles. It has always wobbled. Regulars request it.",
+    "The chef refuses to serve anything with truffle oil and will explain why at length.",
+    "Sunday lunch sells out by Thursday and causes genuine family arguments.",
+    "The wine list is thirty bottles long and the owner has opinions on all thirty.",
+    "There's a dessert that isn't on the menu. Everyone knows about it anyway."
+  ],
+  "pains": [
+    "the phone rings all through service with questions the menu could answer",
+    "people arrive expecting the tasting menu on a Tuesday, which is not a thing",
+    "we rewrite the menu weekly and the version people find online is always last month's",
+    "half the bookings want to know the vegetarian options before they'll commit",
+    "nobody can find our opening hours, so they ring — during service"
+  ],
+  "roles": ["Owner", "Head Chef", "Chef-Patron", "General Manager", "Front of House Manager"],
+  "products": [
+    {"name": "Sourdough & Cultured Butter", "category": "Snacks", "price": 4.5, "description": "Baked at four. Gone by nine.", "allergens": "gluten, milk"},
+    {"name": "Padrón Peppers", "category": "Snacks", "price": 6.0, "description": "One in ten is a surprise.", "allergens": ""},
+    {"name": "Burrata, Blood Orange & Basil", "category": "Starters", "price": 9.5, "description": "The starter people photograph.", "allergens": "milk"},
+    {"name": "Smoked Mackerel Pâté", "category": "Starters", "price": 8.0, "description": "With pickles and toast. Sharp on purpose.", "allergens": "fish, gluten"},
+    {"name": "Ham Hock Terrine", "category": "Starters", "price": 8.5, "description": "Piccalilli made in-house, obviously.", "allergens": "mustard, egg"},
+    {"name": "Market Fish, Brown Butter & Capers", "category": "Mains", "price": 19.5, "description": "Whatever the boat brought. Ask.", "allergens": "fish, milk"},
+    {"name": "Braised Beef Shin, Mash & Greens", "category": "Mains", "price": 18.0, "description": "Six hours in the oven. Falls apart on cue.", "allergens": "milk, celery, sulphites"},
+    {"name": "Wild Mushroom & Ale Pie", "category": "Mains", "price": 16.5, "description": "The vegetarian one that converts carnivores.", "allergens": "gluten, celery"},
+    {"name": "Half Roast Chicken, Bread Sauce", "category": "Mains", "price": 17.5, "description": "Sunday energy, available all week.", "allergens": "gluten, milk"},
+    {"name": "Triple-Cooked Chips", "category": "Sides", "price": 4.5, "description": "The reason people don't share.", "allergens": ""},
+    {"name": "Hispi Cabbage, Anchovy Butter", "category": "Sides", "price": 5.0, "description": "A side that thinks it's a main.", "allergens": "fish, milk"},
+    {"name": "Sticky Toffee Pudding", "category": "Desserts", "price": 7.5, "description": "Non-negotiable. Never coming off the menu.", "allergens": "gluten, milk, egg"},
+    {"name": "Chocolate & Sea Salt Tart", "category": "Desserts", "price": 7.5, "description": "Thin, dark, and gone in four bites.", "allergens": "gluten, milk, egg, soya"},
+    {"name": "House Lemonade", "category": "Drinks", "price": 3.5, "description": "Cloudy, sharp, made this morning.", "allergens": ""}
+  ],
+  "awkward": [
+    {"sku": "RS-101", "name": "Slow-Roast Salt Marsh Lamb Shoulder for Two, Anchovy & Rosemary — Sharing Only, Pre-Order at Weekends", "category": "Mains", "price": 32.0, "description": "The centrepiece. Order it when you book.", "allergens": "fish", "available": true},
+    {"sku": "RS-102", "name": "Chef's Market Plate", "category": "Starters", "price": 11.0, "description": "", "allergens": "gluten, milk, fish, celery", "available": true},
+    {"sku": "RS-103", "name": "Crème Brûlée à l'Ancienne", "category": "Desserts", "price": 7.0, "description": "Cracked tableside. Weekends only, until it runs out.", "allergens": "milk, egg", "available": false}
+  ],
+  "features": [
+    {
+      "id": "product_grid",
+      "name": "menu listing",
+      "description": "The menu, on the page, as text — every dish, every price, organised by course. This is the whole job.",
+      "signals": ["<ul", "<li", "grid", "card", "ProductList", "ProductCard", "MenuItem", "MenuList", "MenuSection", "products.map", "items.map", "menu.map", "dishes.map", "v-for", "{#each", "class=\"product", "className=\"product", "class=\"menu", "className=\"menu", "class=\"dish", "className=\"dish"]
+    },
+    {
+      "id": "contact_form",
+      "name": "booking enquiry form",
+      "description": "A way to ask about tables, dates, and the lamb shoulder without ringing during service.",
+      "signals": ["<form", "<textarea", "type=\"email\"", "type=email", "ContactForm", "BookingForm", "EnquiryForm", "onSubmit", "@submit", "on:submit", "handleSubmit", "<label"]
+    },
+    {
+      "id": "opening_hours",
+      "name": "opening hours",
+      "description": "When we're open, where people will see it. We close Mondays and the phone doesn't know that.",
+      "signals": ["opening", "hours", "Mon", "Monday", "Tuesday", "closed", "Closed", "OpeningHours", "Hours", "<time"]
+    },
+    {
+      "id": "category_filter",
+      "name": "course filter",
+      "description": "Let people jump to starters, mains, or desserts without scrolling the lot.",
+      "signals": ["filter", "Filter", "<select", "category", "Category", "course", "Course", "onChange", "@change", "on:change", "activeCategory", "selectedCategory", "data-category", "tab", "Tab"]
+    },
+    {
+      "id": "allergen_info",
+      "name": "allergen information",
+      "description": "Allergens per dish, clearly. We take this seriously and the page has to as well.",
+      "signals": ["allergen", "Allergen", "gluten", "Gluten", "dietary", "contains"]
+    },
+    {
+      "id": "site_nav",
+      "name": "navigation",
+      "description": "A way to move around the page. Nothing fancy.",
+      "signals": ["<nav", "Navbar", "NavBar", "Navigation", "<header", "role=\"navigation\"", "class=\"nav", "className=\"nav"]
+    }
+  ],
+  "constraints": [
+    "It has to work on a phone. People check menus in the car park.",
+    "Our brand colour is #7B2D26. Please use it.",
+    "No PDFs. The menu goes on the page as text, not a download.",
+    "Don't invent dishes. The kitchen has enough opinions already.",
+    "The prices on the page have to match the file we sent. To the penny.",
+    "No background music. We beg you."
+  ]
+}

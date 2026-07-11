@@ -95,9 +95,12 @@ If a feature the user definitely built comes back "no evidence found," D2 is
 biting, and the fix is already scoped: check the **rendered DOM of the deployed
 page** rather than guessing from source. Pull that forward over anything else.
 
-After that: **more scenarios.** There is exactly one (a bakery). It will feel
-repetitive on the third project. The generator's *shape* doesn't change when you
-add a second scenario — only the seed pools in `data/seeds/` — so this is additive.
+Scenarios: there are now **seven** (bakery, deli, coffee shop, restaurant,
+digital agency, photography, event planning) and the Generate page has a
+picker with a "Surprise me" default. Adding another is additive: drop a JSON
+into `data/seeds/` matching the existing shape and `tests/test_scenarios.py`
+validates it — no code changes. Note the three service scenarios keep the
+fixed CSV schema, so their `allergens` column is legitimately empty.
 
 ## Why the code looks the way it does
 

@@ -1,0 +1,94 @@
+{
+  "scenario": "event_planning_packages_page",
+  "industry": "events",
+  "size": "small business",
+  "sku_prefix": "EV",
+  "background_template": "{name} has been planning other people's big days from {location} since {founded}. Clipboards, contingency plans, and a phone that never quite stops. {quirk}",
+  "company_first": ["Ivy & Oak", "The Gathered", "First Dance", "The Long Table", "Confetti Lane", "Hartwood", "The Occasion", "Willow & Slate", "Golden Thread", "Juniper & June", "Maple & Main", "The Finer Points"],
+  "company_last": ["Events", "Event Co.", "Occasions", "Events & Styling", "Weddings & Events", "Celebrations"],
+  "neighbourhoods": ["an office above the florist on Market Street", "a studio in the old auction house", "a barn office on the estate they style most often", "a desk in the wedding venue's gatehouse", "a converted shipping container at the makers' yard", "a home office with a heroically organised garage"],
+  "founded": ["2010", "2014", "2017", "2019", "2022", "2012"],
+  "quirks": [
+    "There is an emergency kit in the car boot that could restage a small coronation.",
+    "Every event ends with the same photo: the team, exhausted, holding cold chips.",
+    "The seating-plan whiteboard is load-bearing and may never be erased.",
+    "They once relocated an entire wedding indoors in forty minutes and speak of it like a war story.",
+    "Suppliers answer their calls on the first ring. This took a decade.",
+    "The office smells permanently of eucalyptus and laminate."
+  ],
+  "pains": [
+    "every enquiry asks 'so what exactly do you do' and the honest answer is a phone call long",
+    "nobody understands the difference between full planning and on-the-day coordination",
+    "our packages and prices are folklore — they live in old email threads",
+    "we get enquiries for peak Saturdays we lost to bookings months ago",
+    "people think we only do weddings, and corporate is half the business"
+  ],
+  "roles": ["Founder & Lead Planner", "Owner", "Senior Planner", "Events Director", "Lead Coordinator"],
+  "products": [
+    {"name": "Full Wedding Planning", "category": "Weddings", "price": 2800.0, "description": "Everything, from the first venue visit to the last taxi.", "allergens": ""},
+    {"name": "Partial Planning", "category": "Weddings", "price": 1500.0, "description": "You've started; we land it. Joins three months out.", "allergens": ""},
+    {"name": "On-the-Day Coordination", "category": "Weddings", "price": 650.0, "description": "You planned it. We run it. You enjoy it.", "allergens": ""},
+    {"name": "Anniversary & Vow Renewal", "category": "Weddings", "price": 700.0, "description": "The good bits of a wedding, minus the admin.", "allergens": ""},
+    {"name": "Corporate Away Day", "category": "Corporate", "price": 1200.0, "description": "Venue, agenda, catering, and no trust falls unless requested.", "allergens": ""},
+    {"name": "Product Launch Evening", "category": "Corporate", "price": 1600.0, "description": "The room, the run-sheet, the moment. You do the speech.", "allergens": ""},
+    {"name": "Team Christmas Party", "category": "Corporate", "price": 900.0, "description": "Booked by September, heroic by December.", "allergens": ""},
+    {"name": "Private Dinner Party (up to 20)", "category": "Private Parties", "price": 550.0, "description": "Chef, table, flowers, timings. Your house, our clipboard.", "allergens": ""},
+    {"name": "Marquee & Garden Party", "category": "Private Parties", "price": 950.0, "description": "Power, weatherproofing, and somewhere for the band.", "allergens": ""},
+    {"name": "Kids' Party — Stress-Free Package", "category": "Private Parties", "price": 320.0, "description": "Entertainer, cake, bin bags. You just attend.", "allergens": ""},
+    {"name": "Venue Styling", "category": "Styling", "price": 480.0, "description": "Your venue, dressed. Flowers, linen, light.", "allergens": ""},
+    {"name": "Tablescape & Florals Add-On", "category": "Styling", "price": 260.0, "description": "The bit everyone photographs.", "allergens": ""},
+    {"name": "Supplier Matchmaking Session", "category": "Consulting", "price": 150.0, "description": "Ninety minutes, our black book, your shortlist.", "allergens": ""},
+    {"name": "Budget & Timeline Workshop", "category": "Consulting", "price": 180.0, "description": "A realistic plan and a spreadsheet you'll actually use.", "allergens": ""}
+  ],
+  "awkward": [
+    {"sku": "EV-101", "name": "Full Planning & Styling — Multi-Day Celebration incl. Welcome Dinner, Ceremony, Reception & Farewell Brunch", "category": "Weddings", "price": 5200.0, "description": "The whole weekend, planned to the minute. One per month, maximum.", "allergens": "", "available": true},
+    {"sku": "EV-102", "name": "Planner's Little Black Book", "category": "Consulting", "price": 95.0, "description": "", "allergens": "", "available": true},
+    {"sku": "EV-103", "name": "Peak Saturday Coordination (May–September)", "category": "Weddings", "price": 750.0, "description": "The summer diary closes by January. It has already started closing.", "allergens": "", "available": false}
+  ],
+  "features": [
+    {
+      "id": "product_grid",
+      "name": "packages listing",
+      "description": "Every package with its price and what it includes. This is the phone call we keep having, written down once.",
+      "signals": ["<ul", "<li", "grid", "card", "PackageList", "PackageCard", "PriceCard", "ProductList", "ProductCard", "packages.map", "products.map", "items.map", "services.map", "v-for", "{#each", "class=\"package", "className=\"package", "class=\"product", "className=\"product", "class=\"card", "className=\"card"]
+    },
+    {
+      "id": "contact_form",
+      "name": "enquiry form",
+      "description": "Date, venue if known, rough headcount, and what kind of do it is. With those four things we can actually reply usefully.",
+      "signals": ["<form", "<textarea", "type=\"email\"", "type=email", "type=\"date\"", "ContactForm", "EnquiryForm", "BookingForm", "onSubmit", "@submit", "on:submit", "handleSubmit", "<label"]
+    },
+    {
+      "id": "faq",
+      "name": "FAQ section",
+      "description": "What's the difference between full planning and coordination, do you travel, how far ahead to book. Answered once, forever.",
+      "signals": ["faq", "FAQ", "Faq", "<details", "<summary", "accordion", "Accordion", "question", "Question", "frequently"]
+    },
+    {
+      "id": "testimonials",
+      "name": "client testimonials",
+      "description": "Real quotes from real couples and clients. Trust is the entire product.",
+      "signals": ["testimonial", "Testimonial", "<blockquote", "<q", "quote", "Quote", "cite", "clients say", "Review", "review"]
+    },
+    {
+      "id": "category_filter",
+      "name": "event type filter",
+      "description": "Weddings, corporate, private parties — let people find their kind of event fast.",
+      "signals": ["filter", "Filter", "<select", "category", "Category", "onChange", "@change", "on:change", "activeCategory", "selectedCategory", "data-category", "tab", "Tab"]
+    },
+    {
+      "id": "site_nav",
+      "name": "navigation",
+      "description": "A way to move around the page. Simple and calm — that's rather the brand.",
+      "signals": ["<nav", "Navbar", "NavBar", "Navigation", "<header", "role=\"navigation\"", "class=\"nav", "className=\"nav"]
+    }
+  ],
+  "constraints": [
+    "It has to work on a phone. Everything in this industry happens on a phone.",
+    "Our brand colour is #5C6B4C. Please use it.",
+    "No countdown timers. We plan events; we don't panic people into them.",
+    "Don't invent packages. If it isn't in the file, we don't sell it.",
+    "The prices on the page have to match the file we sent. Exactly.",
+    "Nothing that autoplays. Sound, video, anything."
+  ]
+}

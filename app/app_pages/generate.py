@@ -1,8 +1,11 @@
 """Page 1 — generate a new fictional client project."""
 
+import random
+
 import streamlit as st
 
 from fcg.generator import generate_project
+from fcg.generator.seeds import available_scenarios
 from fcg.storage import save_project
 from quota import (
     WEEKLY_LIMIT,
@@ -46,6 +49,13 @@ st.write(
     "get the identical brief, and your scores will mean the same thing."
 )
 
+SURPRISE = "Surprise me"
+scenario_choice = st.selectbox(
+    "Business type",
+    [SURPRISE, *available_scenarios()],
+    format_func=lambda s: s if s == SURPRISE else s.replace("-", " ").capitalize(),
+)
+
 seed_input = st.text_input("Seed (leave blank for a random one)", placeholder="e.g. 4471")
 
 if st.button("Generate", type="primary"):
@@ -57,7 +67,16 @@ if st.button("Generate", type="primary"):
             st.error("A seed has to be a whole number.")
             st.stop()
 
-    project, seed_data = generate_project(seed=seed)
+    # "Surprise me" picks outside the project seed on purpose: scenario is not
+    # part of the seeded draw (a one-way door — see generator/project.py). The
+    # choice is still reproducible because the project id records it.
+    scenario = (
+        random.choice(available_scenarios())
+        if scenario_choice == SURPRISE
+        else scenario_choice
+    )
+
+    project, seed_data = generate_project(seed=seed, scenario=scenario)
     save_project(project, seed_data)
     record_generation(project.id)
 

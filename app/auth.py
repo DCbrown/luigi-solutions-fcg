@@ -39,7 +39,21 @@ def _client() -> Client:
         st.session_state.supabase_client = create_client(
             cfg["url"], cfg["publishable_key"]
         )
-    return st.session_state.supabase_client
+
+    client = st.session_state.supabase_client
+    # Re-pin the data-API auth to the live session on every access. The SDK's
+    # auth-event handler downgrades the Authorization header to the anon key
+    # on any event it doesn't map to a session — update_user's USER_UPDATED
+    # included — after which selects silently see zero rows and inserts fail
+    # RLS with 42501 (the "changed my level, couldn't generate" bug).
+    # get_session() also refreshes an expired token, covering hour-long tabs.
+    try:
+        session = client.auth.get_session()
+        if session:
+            client.postgrest.auth(session.access_token)
+    except Exception:
+        pass  # signed out — anon is the correct identity then
+    return client
 
 
 def current_user():

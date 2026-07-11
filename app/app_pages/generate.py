@@ -87,7 +87,17 @@ if st.button("Generate", type="primary"):
     )
     # Record before saving: if the ledger insert fails, the user gets an
     # error and no project — never a free, unrecorded generation.
-    record_generation(project.id, difficulty)
+    try:
+        record_generation(project.id, difficulty)
+    except Exception as e:
+        st.error(
+            f"Couldn't record this generation ({type(e).__name__}: {e}), "
+            "so no project was issued. If the message mentions a missing "
+            "column or table, a migration in supabase/migrations/ hasn't "
+            "been applied (or the schema cache is stale — rerun it or "
+            "`notify pgrst, 'reload schema'`). Then try again."
+        )
+        st.stop()
     save_project(project, seed_data)
 
     st.session_state["project"] = project

@@ -15,6 +15,15 @@ import os
 # imports pyarrow.
 os.environ.setdefault("ARROW_DEFAULT_MEMORY_POOL", "system")
 
+import sys
+from pathlib import Path
+
+# Local dev imports fcg via the editable install (docs/HANDOFF.md), but deploy
+# environments that only install requirements.txt don't reliably honour the
+# `-e .` line — Streamlit Community Cloud doesn't. This makes the src/ layout
+# importable everywhere; it's a harmless no-op where fcg is already installed.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+
 import streamlit as st
 
 from auth import current_user, logout

@@ -338,3 +338,49 @@ one does not affect the other.
 **Revisit if:** FCG is actually deployed for multiple users. Then per-user data
 isolation lands in `storage.py` — the seam D5 reserved for exactly this — and
 that's a D10, with its own record.
+
+---
+
+## D10 — Weekly generation cap, counted in Supabase (the first app table)
+
+**Decided:** 2026-07-11 · **Extends D9's database footprint from "auth only" to
+"auth + one table".**
+
+Each user gets **3 project generations per calendar week**; the counter resets
+Monday 00:00 UTC ("the following week", per the owner's ask — not a rolling
+7-day window). Once spent, the Generate page says when new requests open and
+refuses until then.
+
+**Why the counter lives in Supabase and not on disk (D5's preference):** the
+app is deployed on Streamlit Community Cloud, where the filesystem is wiped on
+every container restart and shared by all users. A file-based count would
+reset arbitrarily and couldn't be per-user. A quota that vanishes on reboot is
+not a quota. So: `generation_events` in Postgres, one row per generation,
+row-level security so users see and insert only their own rows.
+
+**Mechanics:** `app/quota.py`. The week window is a pure function
+(`week_start`, tested); the count is a `select count` over the user's rows in
+the window; recording is an insert after a successful generate+save. The
+authed Supabase client from D9 carries the user's JWT, so RLS does the
+scoping.
+
+**Fail-closed:** if the count can't be checked (table missing, network down),
+generation is blocked with a visible error, not silently allowed. A cap that
+fails open isn't one. Deploy-ordering consequence: **the migration must run
+before the code ships** — `supabase/migrations/0001_weekly_generation_quota.sql`,
+applied by hand in the dashboard's SQL editor, because the assistant's MCP
+access is read-only.
+
+**Honest edges, all accepted at this scale:**
+- Enforcement is app-side. Someone extracting their JWT could call PostgREST
+  directly and generate without recording. RLS stops them touching anyone
+  else's rows; nothing stops them lying about their own. Real enforcement
+  would be a DB function/edge function doing generate-and-record atomically.
+- Two tabs racing the check can land 4/3. No transaction spans the
+  check-then-insert.
+- A generate that succeeds but whose insert then fails is a free one.
+- The reset is UTC; a user in another timezone sees "Monday" arrive at an odd
+  hour.
+
+**Revisit if:** anyone actually games it, or the cap needs to differ per user
+(then quota config becomes data, not a constant).

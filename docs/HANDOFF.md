@@ -60,6 +60,15 @@ Verified: the publishable key round-trips against the live Auth endpoint
 confirmation is on (Supabase default), and nobody has clicked the
 confirmation link end-to-end yet.
 
+Generation is capped at 3 per user per calendar week (decisions.md **D10**),
+counted in a Supabase `generation_events` table — the first and only app
+table. The check **fails closed**: if the table is missing or unreachable,
+the Generate page blocks with an error rather than generating uncapped. So
+the migration (`supabase/migrations/0001_weekly_generation_quota.sql`) must
+be run by hand in the Supabase SQL editor **before** deploying code that
+includes quota.py — the assistant's MCP access is read-only and cannot apply
+it.
+
 ## The thing that actually needs doing next
 
 **Nobody has ever built a real page and submitted it.**

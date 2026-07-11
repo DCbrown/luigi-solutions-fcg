@@ -45,7 +45,7 @@ else:
         [
             st.Page("app_pages/home.py", title="Home", icon=":material/home:", default=True),
             st.Page("app_pages/generate.py", title="Generate", icon=":material/casino:"),
-            st.Page("app_pages/brief.py", title="Brief", icon=":material/description:"),
+            st.Page("app_pages/projects.py", title="List of projects", icon=":material/folder_open:"),
             st.Page("app_pages/submit.py", title="Submit and score", icon=":material/grading:"),
         ]
     )

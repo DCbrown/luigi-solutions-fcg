@@ -24,7 +24,7 @@ st.markdown(
 current = st.session_state.get("project")
 if current:
     st.success(f"Current project: **{current.client.name}** — `{current.id}`")
-    st.page_link("app_pages/brief.py", label="Read the brief →")
+    st.page_link("app_pages/projects.py", label="Read the brief →")
 else:
     st.info("No project yet.")
     st.page_link("app_pages/generate.py", label="Generate one →")

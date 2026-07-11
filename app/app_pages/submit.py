@@ -6,7 +6,6 @@ from fcg.ingest import IngestError, fetch_repo
 from fcg.scoring import grade_submission
 from fcg.scoring.report import client_reaction, scorecard_frame
 
-st.set_page_config(page_title="Submit — FCG", page_icon="📁")
 st.title("Submit and score")
 
 project = st.session_state.get("project")
@@ -14,7 +13,7 @@ seed_data = st.session_state.get("seed_data")
 
 if project is None:
     st.warning("No project to submit against.")
-    st.page_link("pages/1_Generate.py", label="Generate one →")
+    st.page_link("app_pages/generate.py", label="Generate one →")
     st.stop()
 
 st.caption(f"Submitting against **{project.client.name}** · seed `{project.seed}`")

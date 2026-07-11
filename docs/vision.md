@@ -64,5 +64,7 @@ That's it. That's the product.
 - **Not a judge of taste.** It does not have opinions about your CSS. It checks
   whether you did what the client asked.
 - **Not a portfolio host.** Your work lives in your repo. FCG reads it and forgets it.
-- **Not multiplayer.** One person, one machine, no accounts. If that changes, it
-  changes later.
+- **Not multiplayer — though no longer account-less.** Signup/login exists as
+  of [decisions.md](decisions.md) D9 (Supabase Auth). Identity is the only
+  thing that left the machine: projects, submissions, and scores are still
+  files on one disk, and nothing is shared or per-user yet.

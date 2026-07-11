@@ -286,3 +286,55 @@ it in code you wrote" is defensible.
 
 **Revisit if:** Phase 6 lands (delete this compromise), **or** the false negative
 bites first (apply the interim mitigation, with a test).
+
+---
+
+## D9 — Supabase Auth for signup/login; identity is the only thing that leaves the disk
+
+**Decided:** 2026-07-11 · **Amends D5 and the vision's "no accounts" non-goal.**
+
+The app now has accounts: email + password signup and login, backed by
+**Supabase Auth** on the "fcg" Supabase project (`hkdufhortxeftkhpzpzf`,
+us-west-2). The whole Streamlit UI sits behind a login page.
+
+**Why:** the owner decided to tie the app to the existing Supabase project and
+put real authentication in front of it — the first step toward the app being
+usable by more than one person. This is a deliberate reversal of the "no
+accounts" line, made knowingly, not a drift.
+
+**Scope — deliberately narrow.** Identity moves to Supabase. *Nothing else
+does.* Projects, seed CSVs, rubrics, submissions, and scorecards remain files
+on disk exactly as D5 lays them out; `storage.py` is untouched. There is no
+user table of our own, no per-user partitioning, no RLS — Supabase Auth's
+built-in user store is the entire database footprint. D5 is amended, not
+repealed.
+
+**How the app talks to Supabase:** `app/auth.py` creates one client per
+browser session (deliberately *not* `st.cache_resource` — the client carries
+the signed-in user's tokens, and a process-wide cached client would share one
+user's session with everyone). It uses the project URL and the **publishable
+key** from `.streamlit/secrets.toml` (gitignored; a committed
+`secrets.toml.example` shows the shape). The publishable key is designed to be
+client-visible. The Management API access token — what the assistant-side MCP
+server authenticates with — is never used by, or available to, the app.
+
+**Distinct from the MCP server:** the read-only Supabase MCP connection in
+`~/.claude.json` is Claude Code tooling for the assistant. The app's runtime
+dependency is only on Supabase Auth via the publishable key. Removing either
+one does not affect the other.
+
+**Costs we accept:**
+- The app now needs network and a live Supabase project just to open. The
+  files-on-disk core still works without it (tests never touch auth), but the
+  UI does not.
+- Login state lives in `st.session_state`: per browser tab, gone on tab close
+  or server restart. No remember-me. Fine at this scale.
+- Email confirmation is on (Supabase's default), so signup needs a real inbox
+  before first login.
+- **Accounts authenticate; they do not yet isolate.** `data/generated/` is
+  still one shared directory — two people logging into the same machine see
+  the same saved projects. That is the honest edge of this decision's scope.
+
+**Revisit if:** FCG is actually deployed for multiple users. Then per-user data
+isolation lands in `storage.py` — the seam D5 reserved for exactly this — and
+that's a D10, with its own record.

@@ -26,15 +26,18 @@ def generate_client(rng: random.Random, scenario: str = "bakery") -> Client:
     founded = rng.choice(pool["founded"])
     quirk = rng.choice(pool["quirks"])
 
-    background = (
-        f"{name} has been baking out of {location} since {founded}. "
-        f"Two ovens, six staff, and a queue out the door on Saturdays. {quirk}"
+    # The one line that used to be hardcoded bakery ("has been baking out of…").
+    # It now lives in the pool as a template, so a second scenario reads like
+    # itself. Pure string formatting — it consumes no RNG draws, so the bakery's
+    # output is byte-identical to before (guarded by the Q2 reproducibility test).
+    background = pool["background_template"].format(
+        name=name, location=location, founded=founded, quirk=quirk
     )
 
     return Client(
         name=name,
-        industry="food & drink",
-        size="small business",
+        industry=pool["industry"],
+        size=pool["size"],
         contact_name=fake.name(),
         contact_role=rng.choice(pool["roles"]),
         background=background,

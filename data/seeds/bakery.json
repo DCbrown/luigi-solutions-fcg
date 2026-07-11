@@ -1,5 +1,9 @@
 {
   "scenario": "bakery_order_page",
+  "industry": "food & drink",
+  "size": "small business",
+  "sku_prefix": "BK",
+  "background_template": "{name} has been baking out of {location} since {founded}. Two ovens, six staff, and a queue out the door on Saturdays. {quirk}",
   "company_first": ["Fernwood", "Copper Kettle", "Marigold", "Two Sparrows", "Blackbird", "Harlow", "Rye & Salt", "The Wooden Spoon", "Pike Street", "Juniper", "Old Mill", "Sunday Best"],
   "company_last": ["Bakery", "Bakehouse", "Bread Co.", "Patisserie", "Baking Company", "Bakery & Cafe"],
   "neighbourhoods": ["a converted fire station on the east side", "the covered market", "a corner unit next to the train station", "a shopfront on the high street", "the old post office building", "a unit behind the university campus"],
@@ -39,6 +43,11 @@
     {"name": "Flat White", "category": "Drinks", "price": 3.4, "description": "Local roaster, rotating single origin.", "allergens": "milk"},
     {"name": "Filter Coffee", "category": "Drinks", "price": 2.8, "description": "Bottomless before 9am.", "allergens": ""},
     {"name": "Builder's Tea", "category": "Drinks", "price": 2.2, "description": "Strong. Milk in after.", "allergens": "milk"}
+  ],
+  "awkward": [
+    {"sku": "BK-101", "name": "Sourdough Loaf with Kalamata Olive, Rosemary and Sea Salt (Large Tin)", "category": "Bread", "price": 7.25, "description": "Our Saturday special. Sells out by ten, every week, without fail.", "allergens": "gluten", "available": true},
+    {"sku": "BK-102", "name": "Baker's Choice Box", "category": "Bread", "price": 12.0, "description": "", "allergens": "gluten, milk, egg, nuts", "available": true},
+    {"sku": "BK-103", "name": "Pain au Chocolat & Crème Pâtissière Twist", "category": "Pastry", "price": 4.1, "description": "The one the owner's daughter insisted on.", "allergens": "gluten, milk, egg", "available": false}
   ],
   "features": [
     {

@@ -1,16 +1,28 @@
 """Page 1 — generate a new fictional client project."""
 
+import random
+
 import streamlit as st
 
 from fcg.generator import generate_project
+from fcg.generator.seeds import available_scenarios
 from fcg.storage import save_project
-from quota import WEEKLY_LIMIT, next_week_start, record_generation, used_this_week
+from quota import (
+    WEEKLY_LIMIT,
+    allowance_left,
+    completions_this_week,
+    next_week_start,
+    record_generation,
+    used_this_week,
+)
 
 st.title("Generate a project")
 
-# Weekly cap (docs/decisions.md D10). Fail closed: no count, no generating.
+# Weekly cap plus completion credits (docs/decisions.md D10, D11).
+# Fail closed: no count, no generating.
 try:
     used = used_this_week()
+    completions = completions_this_week()
 except Exception as e:
     st.error(
         "Couldn't check your weekly project allowance "
@@ -19,19 +31,29 @@ except Exception as e:
     )
     st.stop()
 
-left = max(WEEKLY_LIMIT - used, 0)
+cap = WEEKLY_LIMIT + completions
+left = allowance_left(used, completions)
 if left == 0:
     st.warning(
-        f"You've used all {WEEKLY_LIMIT} project requests for this week. "
-        f"New requests open **{next_week_start():%A %d %B}** at 00:00 UTC."
+        f"You've used all {cap} project requests for this week. "
+        f"New requests open **{next_week_start():%A %d %B}** at 00:00 UTC — "
+        "or complete a project you've already generated (submit it for "
+        "scoring) to earn another one right away."
     )
     st.stop()
 
-st.caption(f"{left} of {WEEKLY_LIMIT} project requests left this week.")
+st.caption(f"{left} of {cap} project requests left this week.")
 
 st.write(
     "Same seed, same client — so you can hand someone a number and you'll both "
     "get the identical brief, and your scores will mean the same thing."
+)
+
+SURPRISE = "Surprise me"
+scenario_choice = st.selectbox(
+    "Business type",
+    [SURPRISE, *available_scenarios()],
+    format_func=lambda s: s if s == SURPRISE else s.replace("-", " ").capitalize(),
 )
 
 seed_input = st.text_input("Seed (leave blank for a random one)", placeholder="e.g. 4471")
@@ -45,7 +67,16 @@ if st.button("Generate", type="primary"):
             st.error("A seed has to be a whole number.")
             st.stop()
 
-    project, seed_data = generate_project(seed=seed)
+    # "Surprise me" picks outside the project seed on purpose: scenario is not
+    # part of the seeded draw (a one-way door — see generator/project.py). The
+    # choice is still reproducible because the project id records it.
+    scenario = (
+        random.choice(available_scenarios())
+        if scenario_choice == SURPRISE
+        else scenario_choice
+    )
+
+    project, seed_data = generate_project(seed=seed, scenario=scenario)
     save_project(project, seed_data)
     record_generation(project.id)
 

@@ -1,0 +1,94 @@
+{
+  "scenario": "coffee_shop_menu_page",
+  "industry": "food & drink",
+  "size": "small business",
+  "sku_prefix": "CS",
+  "background_template": "{name} has been pulling shots in {location} since {founded}. Two grinders, a bench of regulars, and a queue that judges you for ordering slowly. {quirk}",
+  "company_first": ["Kettle & Crane", "Northbound", "Little Fern", "Cortado", "Fable & Bean", "The Daily", "Copper Kettle", "Ninth Wave", "Slow Morning", "Penny Farthing", "Ledger & Loaf", "Morning Bell"],
+  "company_last": ["Coffee", "Coffee Co.", "Espresso Bar", "Coffee House", "Roasters", "Café"],
+  "neighbourhoods": ["a kiosk by the station underpass", "the ground floor of the old print works", "a corner unit opposite the park gates", "a narrow shopfront on the high street", "the arch under the viaduct", "a converted garage down the mews"],
+  "founded": ["2009", "2014", "2017", "2019", "2020", "2022"],
+  "quirks": [
+    "The espresso blend changes with the seasons and the regulars pretend not to notice.",
+    "There are exactly four tables and an unspoken rota for them.",
+    "The owner names each roast after a sea shanty and will not be talked out of it.",
+    "Oat milk quietly overtook dairy two winters ago and nobody mentions it.",
+    "The tip jar is a gravy boat. Nobody remembers why.",
+    "On Saturday mornings there is a dog in the doorway. It is not the owner's dog."
+  ],
+  "pains": [
+    "people ring to ask if we have oat milk roughly nine times a day",
+    "the beans we sell by the bag change monthly and nobody knows what's in stock",
+    "we can't keep the menu board and our actual prices in step",
+    "people turn up at four expecting food we stop serving at two",
+    "half the internet still thinks we're closed on Mondays"
+  ],
+  "roles": ["Owner", "Head Barista", "Owner & Roaster", "Café Manager", "Shift Lead"],
+  "products": [
+    {"name": "Flat White", "category": "Espresso", "price": 3.4, "description": "The one most people mean when they say coffee.", "allergens": "milk"},
+    {"name": "Espresso", "category": "Espresso", "price": 2.6, "description": "Double, always. Singles are a myth.", "allergens": ""},
+    {"name": "Cortado", "category": "Espresso", "price": 3.2, "description": "Half coffee, half milk, no debate.", "allergens": "milk"},
+    {"name": "Batch Filter", "category": "Filter", "price": 3.0, "description": "Brewed on the hour. Ask what's in the pot.", "allergens": ""},
+    {"name": "Single-Origin Pour-Over", "category": "Filter", "price": 4.5, "description": "Takes four minutes. Worth all four.", "allergens": ""},
+    {"name": "Iced Latte", "category": "Not Coffee, Technically", "price": 3.8, "description": "Summer's entire personality.", "allergens": "milk"},
+    {"name": "Mocha", "category": "Espresso", "price": 3.8, "description": "Coffee for people who wanted hot chocolate.", "allergens": "milk, soya"},
+    {"name": "Chai Latte", "category": "Not Coffee, Technically", "price": 3.6, "description": "House-spiced, not from a carton.", "allergens": "milk"},
+    {"name": "Hot Chocolate", "category": "Not Coffee, Technically", "price": 3.4, "description": "54% dark, whipped cream optional but correct.", "allergens": "milk, soya"},
+    {"name": "House Blend Beans, 250g", "category": "Beans", "price": 9.5, "description": "What we pull espresso with, in a bag.", "allergens": ""},
+    {"name": "Decaf Beans, 250g", "category": "Beans", "price": 9.0, "description": "Swiss water process. Tastes like coffee, honest.", "allergens": ""},
+    {"name": "Almond Croissant", "category": "Food", "price": 3.4, "description": "From the bakery two doors down, in by eight.", "allergens": "gluten, milk, nuts, egg"},
+    {"name": "Banana Bread", "category": "Food", "price": 3.2, "description": "Toasted, salted butter. Trust us.", "allergens": "gluten, egg, milk"},
+    {"name": "Cheese & Marmite Toastie", "category": "Food", "price": 5.5, "description": "Divisive. Delicious. Both.", "allergens": "gluten, milk"}
+  ],
+  "awkward": [
+    {"sku": "CS-101", "name": "Single-Origin Espresso — Finca El Mirador, Huila, Colombia (Washed, Seasonal Guest Lot)", "category": "Espresso", "price": 4.8, "description": "The guest spot. Here for six weeks, then gone forever.", "allergens": "", "available": true},
+    {"sku": "CS-102", "name": "Barista's Breakfast Board", "category": "Food", "price": 8.5, "description": "", "allergens": "gluten, milk, egg", "available": true},
+    {"sku": "CS-103", "name": "Cinnamon & Cardamom Bun", "category": "Food", "price": 3.8, "description": "Gone by half ten most days.", "allergens": "gluten, milk", "available": false}
+  ],
+  "features": [
+    {
+      "id": "product_grid",
+      "name": "menu listing",
+      "description": "The whole menu — drinks, food, and the beans we sell by the bag, with prices. That's the point of the page.",
+      "signals": ["<ul", "<li", "grid", "card", "ProductList", "ProductCard", "ProductGrid", "MenuItem", "MenuList", "products.map", "items.map", "menu.map", "v-for", "{#each", "class=\"product", "className=\"product", "class=\"menu", "className=\"menu", "class=\"item", "className=\"item"]
+    },
+    {
+      "id": "contact_form",
+      "name": "contact form",
+      "description": "Somewhere to ask about bulk bean orders or hiring the corner for a morning, without ringing during the rush.",
+      "signals": ["<form", "<textarea", "type=\"email\"", "type=email", "ContactForm", "onSubmit", "@submit", "on:submit", "handleSubmit", "<label"]
+    },
+    {
+      "id": "opening_hours",
+      "name": "opening hours",
+      "description": "Hours, prominently. We are not closed on Mondays and haven't been for two years.",
+      "signals": ["opening", "hours", "Mon", "Monday", "Tuesday", "closed", "Closed", "OpeningHours", "Hours", "<time"]
+    },
+    {
+      "id": "category_filter",
+      "name": "category filter",
+      "description": "Let people jump to just the food, or just the beans, without scrolling the whole menu.",
+      "signals": ["filter", "Filter", "<select", "category", "Category", "onChange", "@change", "on:change", "activeCategory", "selectedCategory", "data-category", "tab", "Tab"]
+    },
+    {
+      "id": "allergen_info",
+      "name": "allergen information",
+      "description": "What's in things — milk, nuts, gluten. We answer this forty times a day at the counter.",
+      "signals": ["allergen", "Allergen", "gluten", "Gluten", "dietary", "contains"]
+    },
+    {
+      "id": "site_nav",
+      "name": "navigation",
+      "description": "A way to move around the page. Nothing fancy.",
+      "signals": ["<nav", "Navbar", "NavBar", "Navigation", "<header", "role=\"navigation\"", "class=\"nav", "className=\"nav"]
+    }
+  ],
+  "constraints": [
+    "It has to work on a phone. People check us from the bus stop over the road.",
+    "Our brand colour is #6F4E37. Please use it.",
+    "No stock photos of latte art. It's never our latte art.",
+    "Don't invent drinks. If it isn't on the board, it doesn't go on the page.",
+    "The prices on the page have to match the file we sent. To the penny.",
+    "Nothing that plays sound. It's a café, not an arcade."
+  ]
+}

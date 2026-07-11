@@ -13,10 +13,15 @@ from typing import Any
 from fcg.storage import SEEDS
 
 
-@lru_cache(maxsize=8)
+@lru_cache(maxsize=16)
 def load_pool(scenario: str) -> dict[str, Any]:
     """Read a scenario's seed pools, e.g. 'bakery'."""
     path = SEEDS / f"{scenario}.json"
     if not path.exists():
         raise FileNotFoundError(f"No seed pool for scenario {scenario!r} at {path}")
     return json.loads(path.read_text())
+
+
+def available_scenarios() -> list[str]:
+    """Every scenario slug with a seed pool on disk, sorted."""
+    return sorted(p.stem for p in SEEDS.glob("*.json"))

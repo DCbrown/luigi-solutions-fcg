@@ -384,3 +384,46 @@ access is read-only.
 
 **Revisit if:** anyone actually games it, or the cap needs to differ per user
 (then quota config becomes data, not a constant).
+
+---
+
+## D11 — Completing a project earns back a generation credit
+
+**Decided:** 2026-07-11 · **Extends D10.** Second (and so far last) app table:
+`completion_events`.
+
+The weekly cap is no longer a flat 3: it's **3 + one per project completed
+that week**. "Completed" means *submitted and scored* — the moment
+`grade_submission` returns, the submit page records a completion, and the
+Generate page's allowance rises by one.
+
+**Why:** the cap exists to stop brief-hoarding, not to stop working. Someone
+who finishes what they generate is exactly who the app is for; rewarding a
+completed loop with another brief keeps the pressure aimed at the right
+behaviour.
+
+**The rules, precisely:**
+- One credit per project, **ever** — a `unique (user_id, project_id)`
+  constraint in the database, not app politeness. Resubmitting the same
+  project is an ignored duplicate (`ignore_duplicates` upsert) and mints
+  nothing.
+- Credits count by *completion* date: finishing last week's project this week
+  raises **this** week's cap. Credits do not bank across weeks — Monday
+  00:00 UTC resets everyone to 3.
+- Any score counts. A 12/100 submission is a completed loop. (If junk
+  submissions become a real pattern, the knob is a minimum score in
+  `record_completion` — one line — but adding a threshold now would punish
+  honest low scores, which Q4 spent a lot of effort keeping trustworthy.)
+- Recording failure after scoring is non-fatal: the score is shown, the
+  caption says the credit didn't record. Fail-closed stays on the *check*
+  side (Generate), not the reward side.
+
+**The loophole we're accepting, eyes open:** generate → push junk → submit →
+earn the credit back. Net cost zero, so a determined user can generate
+indefinitely at three-per-week pacing plus junk submissions. The unique
+constraint means each extra generation still requires a fresh generate+submit
+round trip, which is friction enough at this scale.
+
+**Revisit if:** junk-submission farming actually happens (add the score
+threshold), or credits need to bank across weeks (count all-time completions
+minus all-time bonus spends — a query change, not a schema change).

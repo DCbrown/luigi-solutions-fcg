@@ -5,6 +5,7 @@ import streamlit as st
 from fcg.ingest import IngestError, fetch_repo
 from fcg.scoring import grade_submission
 from fcg.scoring.report import client_reaction, scorecard_frame
+from quota import record_completion
 
 st.title("Submit and score")
 
@@ -37,6 +38,19 @@ if st.button("Submit for scoring", type="primary", disabled=not repo_url.strip()
         score = grade_submission(project, submission, seed_data)
 
     st.session_state["score"] = score
+
+    # Completing a project earns one generation credit this week (D11).
+    try:
+        if record_completion(project.id, score.total):
+            st.caption(
+                "Project complete — that's one more project request "
+                "available this week."
+            )
+    except Exception as e:
+        st.caption(
+            f"Couldn't record the completion ({type(e).__name__}); your "
+            "score is unaffected. Reload Generate later to see your credit."
+        )
 
 score = st.session_state.get("score")
 if score:

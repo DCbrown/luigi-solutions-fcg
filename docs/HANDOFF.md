@@ -68,13 +68,14 @@ in `app/history.py`: difficulty is not in the id (it's always "medium", D7);
 if difficulty ever becomes real, the table needs a difficulty column.
 
 Generation is capped at 3 per user per calendar week (decisions.md **D10**),
-counted in a Supabase `generation_events` table — the first and only app
-table. The check **fails closed**: if the table is missing or unreachable,
-the Generate page blocks with an error rather than generating uncapped. So
-the migration (`supabase/migrations/0001_weekly_generation_quota.sql`) must
-be run by hand in the Supabase SQL editor **before** deploying code that
-includes quota.py — the assistant's MCP access is read-only and cannot apply
-it.
+plus one extra request per project *completed* — submitted and scored — that
+week (**D11**, one credit per project ever, enforced by a DB unique
+constraint). The counters live in Supabase `generation_events` and
+`completion_events` tables. The check **fails closed**: if either table is
+missing or unreachable, the Generate page blocks with an error rather than
+generating uncapped. So both migrations in `supabase/migrations/` must be
+run by hand in the Supabase SQL editor **before** deploying code that reads
+them — the assistant's MCP access is read-only and cannot apply them.
 
 ## The thing that actually needs doing next
 
@@ -94,9 +95,12 @@ If a feature the user definitely built comes back "no evidence found," D2 is
 biting, and the fix is already scoped: check the **rendered DOM of the deployed
 page** rather than guessing from source. Pull that forward over anything else.
 
-After that: **more scenarios.** There is exactly one (a bakery). It will feel
-repetitive on the third project. The generator's *shape* doesn't change when you
-add a second scenario — only the seed pools in `data/seeds/` — so this is additive.
+Scenarios: there are now **seven** (bakery, deli, coffee shop, restaurant,
+digital agency, photography, event planning) and the Generate page has a
+picker with a "Surprise me" default. Adding another is additive: drop a JSON
+into `data/seeds/` matching the existing shape and `tests/test_scenarios.py`
+validates it — no code changes. Note the three service scenarios keep the
+fixed CSV schema, so their `allergens` column is legitimately empty.
 
 ## Why the code looks the way it does
 

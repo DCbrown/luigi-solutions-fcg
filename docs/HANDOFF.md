@@ -1,0 +1,118 @@
+# Handoff — 2026-07-11
+
+Written for whoever picks this up next, on a fresh session with no memory of how
+it got here.
+
+**Read [vision.md](vision.md) first — it's short, and nothing else makes sense
+without it.** Then [decisions.md](decisions.md), especially **D2**, which is the
+live risk in this codebase. This file covers only what a `git clone` *doesn't*
+tell you.
+
+---
+
+## Where things stand
+
+**v1 is done and the loop closes.** Generate a brief → build the page yourself →
+paste a GitHub repo URL → get a score out of 100 with feedback per criterion.
+Verified end-to-end against a real cloned repo, including across an app restart.
+37 tests pass.
+
+The four steps in [roadmap.md](roadmap.md) are all ✅. What's left is under
+"After today", in the order the pain will actually arrive.
+
+## Machine state (none of this is in git)
+
+- Repo: `/Users/donovanbrown/Desktop/dev/project1`, pushed to
+  **github.com/DCbrown/luigi-solutions-fcg** (public, `main`).
+- **`venv/` is at the repo root and is gitignored.** Python 3.14, pandas 3.0,
+  streamlit 1.59. Use `venv/bin/python`, not the system one.
+- The package is **installed editable** (`pip install -e .`). That's why `app/`
+  can `import fcg` with no `sys.path` hacks. If imports break on a fresh clone,
+  that install is the missing step.
+- Run it: `venv/bin/streamlit run app/main.py`. Tests: `venv/bin/python -m pytest`.
+- Git identity is set **repo-locally** (Donovan Brown / dess5000@gmail.com), and
+  auth is via an ed25519 SSH key added on 2026-07-11. Pushes just work.
+
+## The thing that actually needs doing next
+
+**Nobody has ever built a real page and submitted it.**
+
+The whole app has only been exercised against fixtures and against repos that
+weren't trying to pass (`octocat/Spoon-Knife` scores ~29/100, correctly). The
+"good submission" path is unit-tested with an in-memory fixture, never a real
+clone.
+
+So the single most valuable thing is not a feature. It is: **generate a project,
+actually build the bakery page in ~2 hours, submit it, and see whether the score
+is fair.** Specifically, whether the heuristic feature checks miss things on a
+real framework build. That is the D2 risk, and it is currently unmeasured.
+
+If a feature the user definitely built comes back "no evidence found," D2 is
+biting, and the fix is already scoped: check the **rendered DOM of the deployed
+page** rather than guessing from source. Pull that forward over anything else.
+
+After that: **more scenarios.** There is exactly one (a bakery). It will feel
+repetitive on the third project. The generator's *shape* doesn't change when you
+add a second scenario — only the seed pools in `data/seeds/` — so this is additive.
+
+## Why the code looks the way it does
+
+Four bugs were found by *running* the thing, not by writing tests first. Each is
+now pinned by a test, and each will look like an over-cautious quirk until you
+know why it's there:
+
+1. **`MANDATORY_FEATURES` in `generator/brief.py`.** Features used to be sampled
+   freely, and a seed produced a brief that never asked for a product listing —
+   while 35 points rode on the client's products appearing. It graded something it
+   never requested. The product listing is now always required.
+
+2. **`seed_data_used` only requires *available* products.** The seed data
+   deliberately marks one item sold out. A dev who thoughtfully hides it was
+   losing points — the scorer was punishing good judgment. Don't "fix" this back.
+
+3. **`_normalise()` unescapes HTML entities.** `&amp;` is how a *correct* build
+   writes "&", so "Cheese & Onion Pasty" was failing to match on a page that
+   escaped it properly — a false negative in a check the user is told is exact.
+
+4. **`_signal_matches()` uses word boundaries; signals are deduped case-insensitively.**
+   The signal `Mon` was firing inside "money", awarding an opening-hours section
+   nobody wrote. And `"closed"` + `"Closed"` were being counted as *two independent*
+   pieces of evidence, faking a confident match out of one hit.
+
+There's a fifth, in `storage.load_seed_data`: pandas may hand `available` back as
+real bools *or* as the strings "True"/"False" depending on version. Mapping a
+column that's already bool matches nothing, yields `NaN` — and **`NaN` is truthy**,
+so every product silently becomes available. The dtype check guarding that is not
+paranoia; the bug was introduced by the fix for itself and caught by
+`test_storage.py`.
+
+## The rule that holds all of it together
+
+`docs/quality.md` **Q4** — a check must be honest about its confidence.
+
+- **Exact** checks (files present, client's products used) state facts:
+  *"No README.md found."*
+- **Heuristic** checks (feature detection, quality signals) state evidence:
+  *"No evidence of a contact form found."*
+
+Never assert that someone didn't build a thing when all you know is that you
+couldn't find it. A scorer that confidently tells a user they didn't build the
+feature they definitely built is worse than no scorer at all — they stop trusting
+every other number on the card. There is a test enforcing this
+(`test_heuristic_failures_never_assert_the_user_didnt_build_it`), and the same
+logic is why false *positives* were fixed too: unearned credit discredits a
+scorecard exactly as much as unfair blame.
+
+The other hard rule is **Q5: submitted code is never executed.** It's cloned,
+read as text, and thrown away. No build, no install, no import. If a feature seems
+to need execution, it doesn't get a quiet exception — it gets a sandbox and a
+decision record.
+
+## Working preferences observed
+
+- Wants working software fast — v1 was explicitly compressed into a single day,
+  and breadth was cut to close the loop ([decisions.md](decisions.md) D7).
+- Prefers being told when something is wrong over being agreed with. Two of the
+  best decisions here came from pushing back: the "web dev vs data analyst"
+  contradiction in the original requirements, and stopping a push to a repo that
+  was public when private had been asked for.

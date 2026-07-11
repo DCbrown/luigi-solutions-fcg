@@ -1,0 +1,20 @@
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.DS_Store
+.env
+
+# Build artefacts from `pip install -e .`
+*.egg-info/
+
+# Symlinks into venv/, dropped here by the streamlit package. They'd clone as
+# dangling links on any other machine.
+.claude/
+.agents/
+
+# Generated artifacts and user uploads are not source
+data/generated/*
+data/submissions/*
+!data/generated/.gitkeep
+!data/submissions/.gitkeep

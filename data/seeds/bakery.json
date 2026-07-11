@@ -1,0 +1,89 @@
+{
+  "scenario": "bakery_order_page",
+  "company_first": ["Fernwood", "Copper Kettle", "Marigold", "Two Sparrows", "Blackbird", "Harlow", "Rye & Salt", "The Wooden Spoon", "Pike Street", "Juniper", "Old Mill", "Sunday Best"],
+  "company_last": ["Bakery", "Bakehouse", "Bread Co.", "Patisserie", "Baking Company", "Bakery & Cafe"],
+  "neighbourhoods": ["a converted fire station on the east side", "the covered market", "a corner unit next to the train station", "a shopfront on the high street", "the old post office building", "a unit behind the university campus"],
+  "founded": ["2009", "2014", "2017", "1998", "2021", "2005"],
+  "quirks": [
+    "The owner still writes the daily specials on a chalkboard and photographs it for Instagram.",
+    "They have taken every order by phone since they opened, and the phone is in the kitchen.",
+    "Their website was built by a cousin in 2016 and has not been touched since.",
+    "They sell out of sourdough by 10am most Saturdays and get complaints about it.",
+    "Half their orders come from three nearby offices placing standing Friday orders.",
+    "The owner's daughter set up an Instagram that now has more followers than the shop has customers."
+  ],
+  "pains": [
+    "we are losing orders because people call while we are elbow-deep in dough",
+    "customers keep asking what is gluten free and we keep telling them one at a time",
+    "we cannot keep the website prices in step with the ones on the counter",
+    "people turn up on Mondays when we are closed, which is nobody's fault but ours",
+    "we get the same six questions on the phone every single morning"
+  ],
+  "roles": ["Owner", "Co-owner", "Head Baker", "Owner & Head Baker", "Shop Manager"],
+  "products": [
+    {"name": "Country Sourdough", "category": "Bread", "price": 5.5, "description": "48-hour ferment, dark crust, open crumb.", "allergens": "gluten"},
+    {"name": "Seeded Rye", "category": "Bread", "price": 6.0, "description": "Dense, malty, good with cheese.", "allergens": "gluten, sesame"},
+    {"name": "White Tin Loaf", "category": "Bread", "price": 3.75, "description": "The everyday one. Soft crumb, thin crust.", "allergens": "gluten, milk"},
+    {"name": "Focaccia", "category": "Bread", "price": 4.5, "description": "Rosemary and flaked salt.", "allergens": "gluten"},
+    {"name": "Butter Croissant", "category": "Pastry", "price": 3.2, "description": "Laminated over three days.", "allergens": "gluten, milk, egg"},
+    {"name": "Pain au Chocolat", "category": "Pastry", "price": 3.5, "description": "Two batons of dark chocolate.", "allergens": "gluten, milk, egg, soya"},
+    {"name": "Almond Croissant", "category": "Pastry", "price": 3.9, "description": "Yesterday's croissant, today's frangipane.", "allergens": "gluten, milk, egg, nuts"},
+    {"name": "Cinnamon Morning Bun", "category": "Pastry", "price": 3.6, "description": "Sticky, and we are not sorry.", "allergens": "gluten, milk, egg"},
+    {"name": "Sausage Roll", "category": "Savoury", "price": 4.2, "description": "Free-range pork, fennel seed.", "allergens": "gluten, milk, egg, mustard"},
+    {"name": "Cheese & Onion Pasty", "category": "Savoury", "price": 4.0, "description": "Mature cheddar, slow onions.", "allergens": "gluten, milk"},
+    {"name": "Spinach & Feta Roll", "category": "Savoury", "price": 4.3, "description": "Filo, not puff. People ask.", "allergens": "gluten, milk"},
+    {"name": "Victoria Sponge Slice", "category": "Cake", "price": 3.4, "description": "Raspberry jam, no buttercream, don't argue.", "allergens": "gluten, milk, egg"},
+    {"name": "Carrot Cake Slice", "category": "Cake", "price": 3.8, "description": "Cream cheese frosting, walnut on top.", "allergens": "gluten, milk, egg, nuts"},
+    {"name": "Lemon Drizzle Slice", "category": "Cake", "price": 3.3, "description": "Crunchy sugar crust.", "allergens": "gluten, milk, egg"},
+    {"name": "Brownie", "category": "Cake", "price": 3.5, "description": "Fudgy. Gluten free by accident, not design.", "allergens": "milk, egg"},
+    {"name": "Flat White", "category": "Drinks", "price": 3.4, "description": "Local roaster, rotating single origin.", "allergens": "milk"},
+    {"name": "Filter Coffee", "category": "Drinks", "price": 2.8, "description": "Bottomless before 9am.", "allergens": ""},
+    {"name": "Builder's Tea", "category": "Drinks", "price": 2.2, "description": "Strong. Milk in after.", "allergens": "milk"}
+  ],
+  "features": [
+    {
+      "id": "product_grid",
+      "name": "product listing",
+      "description": "Show everything we sell, with the price and what's in it. That's the whole point of the page.",
+      "signals": ["<ul", "<li", "grid", "card", "ProductList", "ProductCard", "ProductGrid", "MenuItem", "products.map", "items.map", "v-for", "{#each", "class=\"product", "className=\"product", "class=\"menu", "className=\"menu", "class=\"item", "className=\"item"]
+    },
+    {
+      "id": "contact_form",
+      "name": "contact form",
+      "description": "Let people send us an order or a question without ringing the kitchen.",
+      "signals": ["<form", "<textarea", "type=\"email\"", "type=email", "ContactForm", "OrderForm", "onSubmit", "@submit", "on:submit", "handleSubmit", "<label"]
+    },
+    {
+      "id": "opening_hours",
+      "name": "opening hours",
+      "description": "Put our hours somewhere people will actually see them. We are shut Mondays.",
+      "signals": ["opening", "hours", "Mon", "Monday", "Tuesday", "closed", "Closed", "OpeningHours", "Hours", "<time"]
+    },
+    {
+      "id": "category_filter",
+      "name": "category filter",
+      "description": "People want to see just the bread, or just the cakes. Let them narrow it down.",
+      "signals": ["filter", "Filter", "<select", "category", "Category", "onChange", "@change", "on:change", "activeCategory", "selectedCategory", "data-category", "tab", "Tab"]
+    },
+    {
+      "id": "allergen_info",
+      "name": "allergen information",
+      "description": "We are asked about gluten forty times a week. Put it on the page so we stop being asked.",
+      "signals": ["allergen", "Allergen", "gluten", "Gluten", "dietary", "contains"]
+    },
+    {
+      "id": "site_nav",
+      "name": "navigation",
+      "description": "A way to get around the page. Nothing fancy.",
+      "signals": ["<nav", "Navbar", "NavBar", "Navigation", "<header", "role=\"navigation\"", "class=\"nav", "className=\"nav"]
+    }
+  ],
+  "constraints": [
+    "It has to look right on a phone. Most of our customers are on their phone in a queue somewhere.",
+    "Our brand colour is #6B4423. Please use it.",
+    "No carousels. The last person who built us a site put in a carousel and nobody ever saw slide two.",
+    "Don't use stock photos of bread that isn't ours. Leave a gap and we'll fill it.",
+    "The prices on the page have to match the prices in the file we sent. Exactly.",
+    "Nothing that autoplays sound. Obviously."
+  ]
+}

@@ -33,7 +33,9 @@ st.caption(
 
 for event in events:
     try:
-        project, seed_data = rebuild(event["project_id"])
+        project, seed_data = rebuild(
+            event["project_id"], event.get("difficulty") or "medium"
+        )
     except Exception:
         st.caption(f"`{event['project_id']}` — can't rebuild this one.")
         continue

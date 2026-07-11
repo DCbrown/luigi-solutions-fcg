@@ -39,3 +39,12 @@ def test_rebuild_respects_the_scenario():
     project, _ = rebuild("deli-4471")
     assert project.scenario == "deli"
     assert project.id == "deli-4471"
+
+
+def test_rebuild_respects_difficulty_without_changing_the_id():
+    easy, easy_df = rebuild("bakery-4471", "easy")
+    hard, hard_df = rebuild("bakery-4471", "hard")
+    assert easy.id == hard.id == "bakery-4471"
+    assert easy.difficulty == "easy" and hard.difficulty == "hard"
+    assert len(easy.brief.features) < len(hard.brief.features)
+    assert len(easy_df) < len(hard_df)

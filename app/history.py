@@ -5,9 +5,9 @@ seed (docs/decisions.md D1), and the project_id in generation_events —
 "bakery-4471" — encodes scenario and seed. So history is just rows from that
 table, and each entry regenerates byte-identically on demand.
 
-Caveat pinned here on purpose: difficulty is NOT in the id (it's always
-"medium" today, D7). The day difficulty becomes real, generation_events
-needs a difficulty column and this module stops assuming the default.
+Difficulty is NOT in the id, and since D12 it varies per user — so it rides
+along as a generation_events column and rebuild() takes it explicitly. Rows
+from before the column default to 'medium', which is what they were.
 """
 
 import pandas as pd
@@ -26,10 +26,14 @@ def parse_project_id(project_id: str) -> tuple[str, int]:
     return scenario, int(seed)
 
 
-def rebuild(project_id: str) -> tuple[Project, pd.DataFrame]:
-    """Regenerate a project identically from its id (D1)."""
+def rebuild(
+    project_id: str, difficulty: str = "medium"
+) -> tuple[Project, pd.DataFrame]:
+    """Regenerate a project identically from its id and difficulty (D1)."""
     scenario, seed = parse_project_id(project_id)
-    project, seed_data = generate_project(seed=seed, scenario=scenario)
+    project, seed_data = generate_project(
+        seed=seed, difficulty=difficulty, scenario=scenario
+    )
     assert project.id == project_id, f"{project.id} != {project_id}"
     return project, seed_data
 
@@ -43,7 +47,7 @@ def recent_generations(limit: int = 25) -> list[dict]:
     res = (
         _client()
         .table("generation_events")
-        .select("id, project_id, created_at")
+        .select("id, project_id, difficulty, created_at")
         .eq("user_id", current_user().id)
         .order("created_at", desc=True)
         .limit(limit)

@@ -427,3 +427,49 @@ round trip, which is friction enough at this scale.
 **Revisit if:** junk-submission farming actually happens (add the score
 threshold), or credits need to bank across weeks (count all-time completions
 minus all-time bonus spends — a query change, not a schema change).
+
+---
+
+## D12 — Development levels: junior / mid / senior size the brief
+
+**Decided:** 2026-07-11 · **Unwinds part of D7's "no difficulty scaling" cut.**
+
+Users pick a development level at signup and can change it any time in
+Settings. It maps straight onto the generator's difficulty parameter — which
+has existed, fully plumbed and never exercised, since day one:
+
+| level  | difficulty | features | constraints | dataset rows |
+|--------|-----------|----------|-------------|--------------|
+| junior | easy      | 3        | 1           | 10           |
+| mid    | medium    | 4        | 2           | 14           |
+| senior | hard      | 6        | 3           | 18           |
+
+**Where it lives:** Supabase Auth `user_metadata` — no table, no RLS, set at
+`sign_up` and changed via `auth.update_user`. Accounts from before this
+decision have no metadata and default to **mid**, which is exactly what they
+were getting anyway.
+
+**The schema consequence:** `(scenario, seed)` no longer determines a project
+— difficulty is a third input, and it is NOT in the project id. The List of
+projects page rebuilds from the id, so `generation_events` grows a
+`difficulty` column (migration 0003) recorded at generation time and passed
+to `rebuild()`. Old rows default `'medium'`, which is what they were. This
+was the exact trap `history.py`'s docstring pinned when the list page was
+built; the column is the answer it prescribed.
+
+**Sharing consequence, named honestly:** "try seed 4471" is now ambiguous
+across levels — two users at different levels get different briefs from the
+same seed and their scores are not comparable (the vision's comparability
+claim now holds *per level*). The id stays `scenario-seed` because rubric,
+scoring, and per-project completion credits all key on it; encoding
+difficulty into the id would renumber the project space (the D7 one-way
+door) for a walking skeleton of a feature.
+
+**Ordering:** migration 0003 before deploy — `record_generation` writes the
+column on every generate, and a missing column fails the generate visibly
+(the insert now happens *before* the project is saved, so a failed ledger
+write can't hand out an unrecorded project).
+
+**Revisit if:** levels need to affect scoring leniency too (today they only
+size the ask, never the grading), or "senior" needs harder *checks* rather
+than just more of them.

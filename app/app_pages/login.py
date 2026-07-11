@@ -2,7 +2,7 @@
 
 import streamlit as st
 
-from auth import sign_in, sign_up
+from auth import DEFAULT_LEVEL, LEVELS, sign_in, sign_up
 
 st.title("📁 Fictional Client Generator")
 st.write(
@@ -27,8 +27,15 @@ with signup_tab:
     with st.form("signup"):
         email = st.text_input("Email")
         password = st.text_input("Password (6+ characters)", type="password")
+        level = st.radio(
+            "Your development level",
+            options=list(LEVELS),
+            index=list(LEVELS).index(DEFAULT_LEVEL),
+            format_func=lambda lv: LEVELS[lv],
+            help="Sizes the briefs you're given. You can change it any time in Settings.",
+        )
         if st.form_submit_button("Create account", type="primary"):
-            signed_in, message = sign_up(email.strip(), password)
+            signed_in, message = sign_up(email.strip(), password, level)
             if signed_in:
                 st.rerun()
             elif message and message.startswith("Account created"):

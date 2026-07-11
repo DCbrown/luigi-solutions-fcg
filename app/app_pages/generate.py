@@ -4,6 +4,7 @@ import random
 
 import streamlit as st
 
+from auth import LEVEL_TO_DIFFICULTY, current_level
 from fcg.generator import generate_project
 from fcg.generator.seeds import available_scenarios
 from fcg.storage import save_project
@@ -42,7 +43,11 @@ if left == 0:
     )
     st.stop()
 
-st.caption(f"{left} of {cap} project requests left this week.")
+level = current_level()
+st.caption(
+    f"{left} of {cap} project requests left this week · briefs sized "
+    f"**{level}** (change in Settings)."
+)
 
 st.write(
     "Same seed, same client — so you can hand someone a number and you'll both "
@@ -76,9 +81,14 @@ if st.button("Generate", type="primary"):
         else scenario_choice
     )
 
-    project, seed_data = generate_project(seed=seed, scenario=scenario)
+    difficulty = LEVEL_TO_DIFFICULTY[level]
+    project, seed_data = generate_project(
+        seed=seed, difficulty=difficulty, scenario=scenario
+    )
+    # Record before saving: if the ledger insert fails, the user gets an
+    # error and no project — never a free, unrecorded generation.
+    record_generation(project.id, difficulty)
     save_project(project, seed_data)
-    record_generation(project.id)
 
     st.session_state["project"] = project
     st.session_state["seed_data"] = seed_data

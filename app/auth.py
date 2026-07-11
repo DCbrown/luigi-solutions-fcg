@@ -10,6 +10,17 @@ import streamlit as st
 from supabase import Client, create_client
 from supabase_auth.errors import AuthApiError
 
+# Development levels (docs/decisions.md D12). Stored in Supabase Auth
+# user_metadata — no table. The mapping feeds generate_project(difficulty=…),
+# which has scaled feature count, constraints, and dataset size since day one.
+LEVELS = {
+    "junior": "Junior — a smaller brief: 3 features, a 10-row dataset",
+    "mid": "Mid-level — the standard brief: 4 features, 14 rows",
+    "senior": "Senior — the full ask: 6 features, 18 rows, more constraints",
+}
+LEVEL_TO_DIFFICULTY = {"junior": "easy", "mid": "medium", "senior": "hard"}
+DEFAULT_LEVEL = "mid"
+
 
 def _client() -> Client:
     # One client per browser session, deliberately not st.cache_resource: the
@@ -36,6 +47,34 @@ def current_user():
     return st.session_state.get("auth_user")
 
 
+def current_level() -> str:
+    """The signed-in user's development level.
+
+    Accounts created before levels existed have no metadata — they get
+    DEFAULT_LEVEL until they pick one in Settings.
+    """
+    user = current_user()
+    level = (getattr(user, "user_metadata", None) or {}).get("level")
+    return level if level in LEVELS else DEFAULT_LEVEL
+
+
+def update_level(level: str) -> str | None:
+    """Change the signed-in user's level. Returns an error message or None."""
+    if level not in LEVELS:
+        return f"Unknown level {level!r}."
+    try:
+        res = _client().auth.update_user({"data": {"level": level}})
+    except AuthApiError as e:
+        return e.message
+    except Exception as e:
+        return (
+            "Could not reach the authentication service "
+            f"({type(e).__name__}: {e}). Check your connection and try again."
+        )
+    st.session_state.auth_user = res.user
+    return None
+
+
 def sign_in(email: str, password: str) -> str | None:
     """Sign in. Returns an error message, or None on success."""
     try:
@@ -53,15 +92,21 @@ def sign_in(email: str, password: str) -> str | None:
     return None
 
 
-def sign_up(email: str, password: str) -> tuple[bool, str | None]:
-    """Create an account.
+def sign_up(email: str, password: str, level: str = DEFAULT_LEVEL) -> tuple[bool, str | None]:
+    """Create an account with a development level.
 
     Returns (signed_in, message). With email confirmation on (the Supabase
     default) a successful signup is NOT signed in yet — the message says to
     check the inbox.
     """
     try:
-        res = _client().auth.sign_up({"email": email, "password": password})
+        res = _client().auth.sign_up(
+            {
+                "email": email,
+                "password": password,
+                "options": {"data": {"level": level}},
+            }
+        )
     except AuthApiError as e:
         return False, e.message
     except Exception as e:

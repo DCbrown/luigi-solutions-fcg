@@ -65,11 +65,13 @@ confirmation is on (Supabase default), and nobody has clicked the
 confirmation link end-to-end yet.
 
 The "List of projects" page (which replaced the Brief page in the nav) lists
-the user's `generation_events` rows and **rebuilds each project from its id**
-— `bakery-4471` encodes scenario and seed, and D1 guarantees regeneration is
-byte-identical, so no project payload is stored anywhere. The caveat pinned
-in `app/history.py`: difficulty is not in the id (it's always "medium", D7);
-if difficulty ever becomes real, the table needs a difficulty column.
+the user's `generation_events` rows and **rebuilds each project from its id
+plus the row's difficulty** — `bakery-4471` encodes scenario and seed, D1
+guarantees regeneration is byte-identical, so no project payload is stored
+anywhere. Difficulty became real with **D12** (user levels junior/mid/senior
+→ easy/medium/hard, stored in Supabase Auth user_metadata, changed in
+Settings); it's recorded per generation in the `difficulty` column
+(migration 0003) precisely so rebuilds stay faithful.
 
 Generation is capped at 3 per user per calendar week (decisions.md **D10**),
 plus one extra request per project *completed* — submitted and scored — that

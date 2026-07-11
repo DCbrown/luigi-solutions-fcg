@@ -40,10 +40,18 @@ def used_this_week() -> int:
     return res.count or 0
 
 
-def record_generation(project_id: str) -> None:
-    """Record one generation against the signed-in user's weekly allowance."""
+def record_generation(project_id: str, difficulty: str = "medium") -> None:
+    """Record one generation against the signed-in user's weekly allowance.
+
+    Difficulty is stored so the List of projects page can rebuild the project
+    exactly as it was generated (D12) — the id alone doesn't encode it.
+    """
     _client().table("generation_events").insert(
-        {"user_id": current_user().id, "project_id": project_id}
+        {
+            "user_id": current_user().id,
+            "project_id": project_id,
+            "difficulty": difficulty,
+        }
     ).execute()
 
 

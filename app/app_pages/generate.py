@@ -57,4 +57,4 @@ if st.button("Generate", type="primary"):
         f"**{project.client.name}** needs a page. Seed `{project.seed}`. "
         f"({left - 1} request(s) left this week.)"
     )
-    st.page_link("app_pages/brief.py", label="Read the brief →")
+    st.page_link("app_pages/projects.py", label="Read the brief in your projects →")

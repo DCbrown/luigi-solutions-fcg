@@ -60,6 +60,13 @@ Verified: the publishable key round-trips against the live Auth endpoint
 confirmation is on (Supabase default), and nobody has clicked the
 confirmation link end-to-end yet.
 
+The "List of projects" page (which replaced the Brief page in the nav) lists
+the user's `generation_events` rows and **rebuilds each project from its id**
+— `bakery-4471` encodes scenario and seed, and D1 guarantees regeneration is
+byte-identical, so no project payload is stored anywhere. The caveat pinned
+in `app/history.py`: difficulty is not in the id (it's always "medium", D7);
+if difficulty ever becomes real, the table needs a difficulty column.
+
 Generation is capped at 3 per user per calendar week (decisions.md **D10**),
 counted in a Supabase `generation_events` table — the first and only app
 table. The check **fails closed**: if the table is missing or unreachable,

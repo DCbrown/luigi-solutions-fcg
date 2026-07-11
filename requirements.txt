@@ -1,3 +1,8 @@
+# The fcg package itself (src/ layout) — without this, `import fcg` only
+# works where someone remembered to `pip install -e .` (docs/HANDOFF.md).
+# Streamlit Community Cloud installs exactly this file, so it must be here.
+-e .
+
 streamlit>=1.59
 pandas>=3.0
 numpy>=2.5

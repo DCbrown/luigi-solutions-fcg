@@ -16,6 +16,14 @@ def _client() -> Client:
     # client carries the signed-in user's tokens, and a process-wide cached
     # client would hand one user's session to everyone.
     if "supabase_client" not in st.session_state:
+        if "supabase" not in st.secrets:
+            st.error(
+                "Supabase secrets are not configured. Locally: copy "
+                "`.streamlit/secrets.toml.example` to `.streamlit/secrets.toml` "
+                "and fill it in. On Streamlit Community Cloud: paste the same "
+                "`[supabase]` block under the app's **Settings → Secrets**."
+            )
+            st.stop()
         cfg = st.secrets["supabase"]
         st.session_state.supabase_client = create_client(
             cfg["url"], cfg["publishable_key"]
@@ -36,8 +44,11 @@ def sign_in(email: str, password: str) -> str | None:
         )
     except AuthApiError as e:
         return e.message
-    except Exception:
-        return "Could not reach the authentication service. Check your connection and try again."
+    except Exception as e:
+        return (
+            "Could not reach the authentication service "
+            f"({type(e).__name__}: {e}). Check your connection and try again."
+        )
     st.session_state.auth_user = res.user
     return None
 
@@ -53,8 +64,11 @@ def sign_up(email: str, password: str) -> tuple[bool, str | None]:
         res = _client().auth.sign_up({"email": email, "password": password})
     except AuthApiError as e:
         return False, e.message
-    except Exception:
-        return False, "Could not reach the authentication service. Check your connection and try again."
+    except Exception as e:
+        return False, (
+            "Could not reach the authentication service "
+            f"({type(e).__name__}: {e}). Check your connection and try again."
+        )
     if res.session is None:
         return (
             False,

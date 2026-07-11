@@ -1,8 +1,7 @@
-# The fcg package itself (src/ layout) — without this, `import fcg` only
-# works where someone remembered to `pip install -e .` (docs/HANDOFF.md).
-# Streamlit Community Cloud installs exactly this file, so it must be here.
--e .
-
+# fcg itself is deliberately NOT listed. Deploys get it from the sys.path
+# shim in app/main.py; an `-e .` here made Community Cloud bake a stale
+# snapshot into its cached venv that shadowed the live src/ tree. Local
+# dev installs it once with `pip install -e .` (docs/HANDOFF.md).
 streamlit>=1.59
 pandas>=3.0
 numpy>=2.5

@@ -31,9 +31,13 @@ The four steps in [roadmap.md](roadmap.md) are all ✅. What's left is under
   don't need it.
 - **`venv/` is at the repo root and is gitignored.** Python 3.14, pandas 3.0,
   streamlit 1.59. Use `venv/bin/python`, not the system one.
-- The package is **installed editable** (`pip install -e .`). That's why `app/`
-  can `import fcg` with no `sys.path` hacks. If imports break on a fresh clone,
-  that install is the missing step.
+- The package is **installed editable** (`pip install -e .`). If imports break
+  in tests on a fresh clone, that install is the missing step. The app itself
+  no longer depends on it: `app/main.py` puts `src/` on `sys.path`, and
+  requirements.txt deliberately does NOT list the package — an `-e .` there
+  made Community Cloud bake a stale snapshot into its cached venv that
+  shadowed the live code (the ImportError-after-merge incident). Don't put it
+  back.
 - Run it: `venv/bin/streamlit run app/main.py`. Tests: `venv/bin/python -m pytest`.
 - Git identity is set **repo-locally** (Donovan Brown / dess5000@gmail.com), and
   auth is via an ed25519 SSH key added on 2026-07-11. Pushes just work.

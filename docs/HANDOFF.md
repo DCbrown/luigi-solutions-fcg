@@ -113,6 +113,15 @@ so every product silently becomes available. The dtype check guarding that is no
 paranoia; the bug was introduced by the fix for itself and caught by
 `test_storage.py`.
 
+And a sixth, at the top of `app/main.py`: `ARROW_DEFAULT_MEMORY_POOL=system`.
+On 2026-07-11 the running app segfaulted (exit 139) in **pyarrow 25.0's bundled
+mimalloc** while Arrow-serialising a DataFrame on a Streamlit script thread —
+crash report `Python-2026-07-11-153102.ips`, stack through `NdarrayToArrow →
+mi_thread_init`. Not reproducible in isolation (250 threaded conversions pass),
+so the env var routes Arrow to the system allocator instead of mimalloc. It is
+read once, at pyarrow import — which is why it's set before any other import in
+main.py. Moving it below an import that pulls in pyarrow silently disables it.
+
 ## The rule that holds all of it together
 
 `docs/quality.md` **Q4** — a check must be honest about its confidence.

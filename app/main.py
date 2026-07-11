@@ -7,6 +7,14 @@ Routing is gated on auth (docs/decisions.md D9): signed out, the only page is
 login; signed in, the full app.
 """
 
+import os
+
+# pyarrow's bundled mimalloc segfaulted the app mid-session (Arrow conversion
+# on a script thread, 2026-07-11 — see docs/HANDOFF.md); the system allocator
+# doesn't. Read once at pyarrow import, so it must be set before anything
+# imports pyarrow.
+os.environ.setdefault("ARROW_DEFAULT_MEMORY_POOL", "system")
+
 import streamlit as st
 
 from auth import current_user, logout
